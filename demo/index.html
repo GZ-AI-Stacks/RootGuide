@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<title>RootGuide – Pflanzen- & Dünger-Kompass mit Pflanzabständen</title>
+<!-- PWA / Installation Meta-Tags -->
+<meta name="theme-color" content="#00ff88">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RootGuide">
+<link rel="apple-touch-icon" sizes="192x192" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgc3Ryb2tlPSIjMDBmZjg4IiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNNTAgMjUgTDUwIDQ1IEw3MCAzMCBMNTAgNDUgTDUwIDc1IEwzMCA2MCBMNTAgNzUgTDUwIDQ1IiBzdHJva2U9IiMwMGZmODgiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDUiIHI9IjMiIGZpbGw9IiMwMGZmODgiLz48cGF0aCBkPSJNNTAgNDUgTDM1IDU1IEwyMCA0NSBMMzUgNTUgTDUwIDQ1IiBzdHJva2U9IiMwMGZmODgiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgc3Ryb2tlPSIjMDBmZjg4IiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNNTAgMjUgTDUwIDQ1IEw3MCAzMCBMNTAgNDUgTDUwIDc1IEwzMCA2MCBMNTAgNzUgTDUwIDQ1IiBzdHJva2U9IiMwMGZmODgiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDUiIHI9IjMiIGZpbGw9IiMwMGZmODgiLz48cGF0aCBkPSJNNTAgNDUgTDM1IDU1IEwyMCA0NSBMMzUgNTUgTDUwIDQ1IiBzdHJva2U9IiMwMGZmODgiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== BOOT ANIMATION (gekürzt, aber voll funktionsfähig) ===== */
+  #bootScreen {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; z-index: 9999; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  #matrixCanvas {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0.3;
+  }
+  .boot-terminal {
+    position: relative; z-index: 2;
+    font-family: 'Share Tech Mono', monospace;
+    color: #00ff41; font-size: 0.8rem;
+    max-width: 500px; width: 90%; text-align: left;
+  }
+  .boot-line {
+    opacity: 0; transform: translateX(-10px);
+    margin: 3px 0; white-space: nowrap;
+  }
+  .boot-line.visible { opacity: 1; transform: translateX(0); transition: all 0.3s; }
+  .boot-progress-wrap {
+    position: relative; z-index: 2;
+    width: 80%; max-width: 400px; margin-top: 20px;
+  }
+  .boot-progress-bg {
+    width: 100%; height: 3px;
+    background: #111; border-radius: 2px;
+  }
+  .boot-progress-bar {
+    width: 0%; height: 100%;
+    background: linear-gradient(90deg, #00ff41, #00c896);
+    border-radius: 2px; transition: width 0.4s;
+  }
+  .boot-progress-text {
+    text-align: center; margin-top: 6px;
+    font-family: 'Share Tech Mono';
+    color: #00ff41; font-size: 0.7rem;
+  }
+  .boot-title-reveal {
+    position: relative; z-index: 2;
+    font-size: 1.5rem; text-align: center; margin-top: 24px; opacity: 0;
+    font-family: 'Share Tech Mono';
+    color: #00ff88; text-shadow: 0 0 30px #00ff88;
+    letter-spacing: 4px;
+  }
+  .boot-title-reveal.visible { opacity: 1; transition: opacity 1.2s; }
+
+  /* ===== MAIN APP ===== */
+  :root {
+    --neon: #00ff88; --neon2: #00cfff; --neon3: #ff6b35; --neon-bloom: #ffaa44;
+    --bg: #0a0d12; --bg2: #0f1318; --bg3: #161c24;
+    --border: #1e2d20; --border2: #00ff8830;
+    --text: #c8e6c9; --text-dim: #4a6d4e;
+    --head-bg: #001a0e; --shadow: 0 0 30px #00ff8820;
+    --zoom: 1;
+  }
+  [data-theme="light"] {
+    --bg: #e8ede8; --bg2: #dce3dc; --bg3: #f0f5f0;
+    --border: #b0c4b0; --border2: #3a7c3a40;
+    --text: #1a3a22; --text-dim: #4a6e4a;
+    --head-bg: #cde0cd; --shadow: 0 2px 12px #2a5a2a20;
+    --neon: #007a2f; --neon2: #006a9e; --neon3: #cc4400; --neon-bloom: #cc6600;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; transition: background 0.3s; }
+  .wrapper { max-width: 1200px; margin: 0 auto; padding: 24px 20px 60px; transform: scale(var(--zoom)); transition: transform 0.2s; display: none; }
+  .wrapper.visible { display: block; }
+  header { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--border2); align-items: center; }
+  .logo-area { display: flex; align-items: center; gap: 12px; }
+  .logo-svg { width: 40px; height: 40px; filter: drop-shadow(0 0 8px var(--neon)); }
+  .logo-svg circle, .logo-svg path { stroke: var(--neon); fill: none; stroke-width: 3; }
+  .logo-text h1 { font-size: 28px; color: var(--neon); font-family: 'Share Tech Mono'; text-shadow: 0 0 20px currentColor; }
+  .logo-text .sub { font-size: 13px; letter-spacing: 4px; color: var(--text-dim); }
+  .controls { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn { background: transparent; border: 1px solid var(--neon); color: var(--neon); font-family: 'Share Tech Mono'; font-size: 13px; padding: 8px 14px; cursor: pointer; transition: 0.2s; }
+  .btn:hover { background: var(--neon); color: #000; }
+  .zoom-group { display: flex; border: 1px solid var(--border2); }
+  .zoom-group .btn { border: none; border-right: 1px solid var(--border2); padding: 8px 16px; }
+  .zoom-level { padding: 8px 14px; background: var(--bg2); font-family: 'Share Tech Mono'; min-width: 52px; text-align: center; }
+
+  .info-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap: 12px; margin-bottom: 28px; }
+  .info-card { background: var(--bg3); border: 1px solid var(--border2); padding: 14px 18px; position: relative; }
+  .info-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--neon); }
+  .info-card .label { font-size: 11px; letter-spacing: 3px; color: var(--text-dim); }
+  .info-card .value { font-family: 'Share Tech Mono'; font-size: 18px; font-weight: bold; color: var(--neon); }
+
+  .input-section { background: var(--bg2); border: 1px solid var(--border2); box-shadow: var(--shadow); margin-bottom: 28px; overflow: hidden; }
+  .section-title { font-size: 15px; font-weight: 700; letter-spacing: 5px; padding: 14px 20px; background: var(--head-bg); border-bottom: 1px solid var(--border2); display: flex; align-items: center; gap: 12px; }
+  .section-title .pill { width: 10px; height: 10px; border-radius: 50%; background: var(--neon); }
+  .input-body { padding: 20px; }
+  .select-group { margin-bottom: 20px; }
+  .search-box { margin-bottom: 12px; }
+  .search-box input { width: 100%; padding: 10px; background: var(--bg); border: 1px solid var(--border2); color: var(--text); font-family: 'Share Tech Mono'; font-size: 14px; }
+  select, input, textarea { width: 100%; padding: 12px; background: var(--bg); border: 1px solid var(--border2); color: var(--text); font-family: 'Share Tech Mono'; font-size: 16px; }
+  select option { background: var(--bg); color: var(--text); }
+  .action-buttons { display: flex; gap: 12px; margin: 16px 0 8px; flex-wrap: wrap; }
+  .action-btn { background: var(--bg); border: 1px solid var(--border2); color: var(--text-dim); padding: 8px 16px; font-family: 'Share Tech Mono'; cursor: pointer; transition: 0.2s; }
+  .action-btn:hover { border-color: var(--neon); color: var(--neon); }
+  .delete-btn { border-color: var(--neon3); color: var(--neon3); }
+  .delete-btn:hover { background: var(--neon3); color: #000; border-color: var(--neon3); }
+  .phase-toggle { display: flex; margin-bottom: 20px; gap: 0; }
+  .phase-btn { flex: 1; padding: 12px; background: var(--bg); border: 1px solid var(--border2); color: #c8d0d8; font-weight: 600; letter-spacing: 0.5px; cursor: pointer; font-family: 'Share Tech Mono'; text-align: center; transition: 0.2s; }
+  .phase-btn:hover { color: #fff; border-color: var(--border); background: rgba(255,255,255,0.04); }
+  .phase-btn.active-seed { background: rgba(0,180,255,0.18); color: var(--neon2); border-color: var(--neon2); box-shadow: 0 0 10px rgba(0,180,255,0.35) inset; }
+  .phase-btn.active-veg { background: rgba(0,255,136,0.18); color: var(--neon); border-color: var(--neon); box-shadow: 0 0 10px rgba(0,255,136,0.35) inset; }
+  .phase-btn.active-bloom { background: rgba(255,170,68,0.18); color: var(--neon-bloom); border-color: var(--neon-bloom); box-shadow: 0 0 10px rgba(255,170,68,0.35) inset; }
+  .value-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 16px; margin: 20px 0; }
+  .value-card { background: var(--bg3); border: 1px solid var(--border2); padding: 18px; text-align: center; border-top: 3px solid var(--neon); }
+  .value-card .value-number { font-size: 28px; font-weight: 800; color: var(--neon); font-family: 'Share Tech Mono'; }
+  .note-area { background: var(--bg); border: 1px solid var(--border2); padding: 12px; margin-top: 16px; font-family: 'Share Tech Mono'; font-size: 14px; }
+
+  .form-row { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+  .form-group { flex: 1; min-width: 120px; }
+  .form-group label { display: block; font-size: 11px; letter-spacing: 2px; margin-bottom: 4px; color: var(--text-dim); }
+  .icon-preview { font-size: 24px; text-align: center; margin-top: 8px; }
+  .quick-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .quick-btn { background: var(--bg); border: 1px solid var(--border); color: var(--text-dim); padding: 6px 12px; font-family: 'Share Tech Mono'; font-size: 11px; cursor: pointer; }
+  .quick-btn:hover { border-color: var(--neon); color: var(--neon); }
+  .calc-btn { width: 100%; padding: 14px; background: var(--neon); color: #000; font-weight: 800; border: none; font-family: 'Share Tech Mono'; cursor: pointer; text-transform: uppercase; letter-spacing: 3px; }
+  .result-table { overflow-x: auto; margin-top: 20px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 12px; text-align: center; border-bottom: 1px solid var(--border); }
+  th { background: var(--head-bg); font-family: 'Share Tech Mono'; }
+  .warning { background: rgba(255,107,53,0.1); border: 1px solid rgba(255,107,53,0.3); padding: 10px; font-size: 13px; color: var(--neon3); margin-bottom: 16px; display: none; }
+  .footer-note { text-align: center; font-size: 12px; color: var(--text-dim); margin-top: 20px; font-family: 'Share Tech Mono'; }
+  @media (max-width: 600px) { .value-number { font-size: 22px; } th,td { padding: 8px; } .form-row { flex-direction: column; } }
+
+  /* ========== APP-WALKTHROUGH ========== */
+  #tourOverlay {
+    position: fixed; inset: 0;
+    z-index: 9000; display: none;
+    pointer-events: none;
+  }
+  #tourOverlay.visible { display: block; }
+  /* 4 Dimm-Panels rund um das Highlight - dunkler Bereich, aber Highlight bleibt komplett klar */
+  .tour-dim {
+    position: fixed;
+    background: rgba(0,0,0,0.72);
+    pointer-events: auto;
+    z-index: 9000;
+    transition: all 0.35s ease;
+  }
+  .tour-highlight {
+    position: fixed;
+    border: 2px solid var(--neon);
+    border-radius: 4px;
+    box-shadow:
+      0 0 0 3px rgba(0,255,136,0.35),
+      0 0 22px rgba(0,255,136,0.7),
+      0 0 60px rgba(0,255,136,0.35);
+    pointer-events: none;
+    transition: all 0.35s ease;
+    z-index: 9001;
+    /* Highlight selbst hat KEINEN Hintergrund - die App-Inhalte bleiben darunter scharf sichtbar */
+    background: transparent;
+  }
+  .tour-tooltip {
+    position: fixed;
+    background: var(--bg3);
+    border: 1px solid var(--neon);
+    z-index: 9003;
+    pointer-events: auto;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0,255,136,0.35), 0 0 60px rgba(0,0,0,0.6);
+    padding: 18px 20px;
+    max-width: 360px;
+    min-width: 280px;
+    z-index: 9002;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    transition: top 0.35s ease, left 0.35s ease;
+  }
+  .tour-tooltip h4 {
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--neon);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+    text-shadow: 0 0 12px var(--neon);
+  }
+  .tour-tooltip p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+  .tour-tooltip .tour-step {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    margin-bottom: 4px;
+  }
+  .tour-tooltip .tour-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .tour-tooltip .tour-actions .left,
+  .tour-tooltip .tour-actions .right {
+    display: flex;
+    gap: 8px;
+  }
+  .tour-btn {
+    background: transparent;
+    border: 1px solid var(--neon);
+    color: var(--neon);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    padding: 7px 14px;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: 0.18s;
+    border-radius: 2px;
+  }
+  .tour-btn:hover, .tour-btn:focus {
+    background: var(--neon);
+    color: #000;
+    outline: none;
+  }
+  .tour-btn.primary {
+    background: var(--neon);
+    color: #001a0c;
+    font-weight: 700;
+  }
+  .tour-btn.primary:hover, .tour-btn.primary:focus {
+    background: #00cc6a;
+    color: #000;
+  }
+  .tour-btn.skip {
+    border-color: var(--text-dim);
+    color: var(--text-dim);
+  }
+  .tour-btn.skip:hover, .tour-btn.skip:focus {
+    background: var(--text-dim);
+    color: var(--bg);
+  }
+  .tour-progress {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .tour-progress span {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    transition: background 0.3s;
+  }
+  .tour-progress span.done { background: var(--neon); box-shadow: 0 0 8px var(--neon); }
+  .tour-progress span.current { background: var(--neon-bloom); box-shadow: 0 0 8px var(--neon-bloom); }
+  @media (max-width: 600px) {
+    .tour-tooltip { max-width: calc(100vw - 32px); min-width: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tour-highlight, .tour-tooltip { transition: none !important; }
+  }
+
+  /* ========== LIZENZ-SPERRE (Lock-Overlay) ========== */
+  body.rg-locked { overflow: hidden; }
+  body.rg-locked #bootScreen,
+  body.rg-locked #app,
+  body.rg-locked .wrapper { display: none !important; }
+  .rg-lock {
+    position: fixed; inset: 0;
+    z-index: 200000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1.4rem;
+    background:
+      radial-gradient(ellipse at 25% 15%, rgba(0,255,136,0.10), transparent 55%),
+      radial-gradient(ellipse at 75% 85%, rgba(0,207,255,0.07), transparent 55%),
+      #06100a;
+  }
+  .rg-lock-card {
+    width: 100%; max-width: 420px;
+    background: linear-gradient(160deg, #0a1610 0%, #0f1f17 100%);
+    border: 1px solid rgba(0,255,136,0.4);
+    border-radius: 14px;
+    box-shadow: 0 0 0 1px rgba(0,207,255,0.12), 0 25px 60px -15px rgba(0,0,0,0.75);
+    padding: 2.2rem 1.7rem;
+    text-align: center;
+    color: #e8fff0;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .rg-lock-logo {
+    font-size: 3.4rem; line-height: 1;
+    margin-bottom: 0.6rem;
+    filter: drop-shadow(0 0 18px #00ff88);
+  }
+  .rg-lock-card h2 {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.6rem; font-weight: 700;
+    margin-bottom: 0.35rem;
+    background: linear-gradient(135deg, #00ff88, #00cfff);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+    letter-spacing: 0.06em;
+  }
+  .rg-lock-card .rg-lock-sub {
+    font-size: 0.92rem;
+    color: #9cc8a6;
+    margin-bottom: 1.3rem;
+    line-height: 1.55;
+  }
+  .rg-lock-input {
+    width: 100%;
+    background: rgba(0,0,0,0.45);
+    border: 1px solid rgba(0,207,255,0.45);
+    border-radius: 8px;
+    color: #fff;
+    padding: 0.8rem 1rem;
+    font: inherit; font-size: 1rem;
+    text-align: center; letter-spacing: 1px;
+    min-height: 50px;
+    box-sizing: border-box;
+  }
+  .rg-lock-input:focus {
+    outline: none;
+    border-color: #00ff88;
+    box-shadow: 0 0 0 3px rgba(0,255,136,0.25);
+  }
+  .rg-lock-btn {
+    width: 100%; margin-top: 0.9rem;
+    background: linear-gradient(135deg, #00ff88, #00cfff);
+    border: none; border-radius: 8px;
+    color: #001a0c;
+    padding: 0.85rem;
+    font: inherit; font-weight: 700; font-size: 1rem;
+    cursor: pointer;
+    min-height: 50px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 0.5rem;
+    letter-spacing: 0.05em;
+  }
+  .rg-lock-btn:hover { filter: brightness(1.08); }
+  .rg-lock-btn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  .rg-lock-error {
+    color: #ff7da9;
+    font-size: 0.85rem;
+    margin-top: 0.7rem;
+    min-height: 1.2rem;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .rg-lock-hint {
+    color: #6f9378;
+    font-size: 0.78rem;
+    margin-top: 1.3rem;
+    line-height: 1.5;
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 0.02em;
+  }
+  .rg-lock-hint a { color: #00cfff; text-decoration: none; }
+  .rg-lock-hint a:hover, .rg-lock-hint a:focus { text-decoration: underline; }
+  .rg-lock-input.shake { animation: rgLockShake 0.4s ease; }
+  @keyframes rgLockShake {
+    0%,100% { transform: translateX(0); }
+    20%,60% { transform: translateX(-7px); }
+    40%,80% { transform: translateX(7px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .rg-lock-input.shake { animation: none; }
+  }
+
+  /* ========== DEMO-MODE ========== */
+  .demo-banner {
+    position: sticky; top: 0; z-index: 50000;
+    background: linear-gradient(90deg, #00ff88, #00cfff);
+    color: #001a0c;
+    text-align: center;
+    padding: 10px 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    box-shadow: 0 4px 20px rgba(0,255,136,0.3);
+  }
+  .demo-banner a {
+    color: #001a0c;
+    text-decoration: underline;
+    font-weight: 800;
+  }
+  .demo-banner a:hover, .demo-banner a:focus {
+    background: #001a0c;
+    color: #00ff88;
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-decoration: none;
+  }
+  .demo-blur {
+    filter: blur(5px);
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none;
+  }
+  /* Werte in Demo-Mode automatisch unscharf */
+  body .value-number,
+  body #phValue,
+  body #ecValue,
+  body #lightValue,
+  body #ecRecommend {
+    filter: blur(5px) brightness(0.7);
+    user-select: none;
+    -webkit-user-select: none;
+    position: relative;
+  }
+  /* Schloss-Symbol-Overlay auf Wert-Karten */
+  .value-card { position: relative; }
+  .value-card::after {
+    content: '🔒';
+    position: absolute;
+    top: 50%; right: 8px;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    z-index: 5;
+    filter: drop-shadow(0 0 8px #00ff88);
+  }
+  .demo-curtain { position: relative; }
+  .demo-curtain > *:not(.demo-lock-msg) {
+    filter: blur(4px) brightness(0.6);
+    pointer-events: none;
+    user-select: none;
+  }
+  .demo-curtain .demo-lock-msg {
+    position: absolute; inset: 0;
+    z-index: 11;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0.8rem;
+    padding: 1rem;
+    text-align: center;
+    background: rgba(10,13,18,0.55);
+  }
+  .demo-curtain .demo-lock-msg .lock-icon {
+    font-size: 2.6rem;
+    filter: drop-shadow(0 0 18px #00ff88);
+  }
+  .demo-curtain .demo-lock-msg .lock-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.15rem;
+    color: #00ff88;
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 18px #00ff88;
+    font-weight: 700;
+  }
+  .demo-curtain .demo-lock-msg .lock-sub {
+    font-family: 'Rajdhani', sans-serif;
+    color: #c8e6c9;
+    font-size: 0.95rem;
+    max-width: 360px;
+  }
+  .demo-curtain .demo-lock-msg .lock-btn {
+    background: linear-gradient(135deg, #00ff88, #00cfff);
+    color: #001a0c;
+    border: none;
+    padding: 0.7rem 1.4rem;
+    border-radius: 6px;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,255,136,0.4);
+  }
+  .demo-curtain .demo-lock-msg .lock-btn:hover,
+  .demo-curtain .demo-lock-msg .lock-btn:focus {
+    filter: brightness(1.1);
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+  }
+  .demo-modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.78);
+    z-index: 100000;
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .demo-modal-backdrop.show { display: flex; }
+  .demo-modal {
+    background: linear-gradient(160deg, #0a1610, #0f1f17);
+    border: 1px solid rgba(0,255,136,0.5);
+    border-radius: 14px;
+    padding: 2rem 1.8rem;
+    max-width: 420px; width: 100%;
+    text-align: center;
+    color: #e8fff0;
+    font-family: 'Rajdhani', sans-serif;
+    box-shadow: 0 0 60px rgba(0,255,136,0.3);
+  }
+  .demo-modal .ic { font-size: 3rem; line-height: 1; margin-bottom: 0.6rem;
+    filter: drop-shadow(0 0 18px #00ff88); }
+  .demo-modal h3 {
+    font-family: 'Share Tech Mono', monospace;
+    background: linear-gradient(135deg, #00ff88, #00cfff);
+    -webkit-background-clip: text; background-clip: text;
+    color: transparent;
+    font-size: 1.4rem;
+    margin-bottom: 0.6rem;
+    letter-spacing: 0.06em;
+  }
+  .demo-modal p { color: #9cc8a6; font-size: 0.95rem; margin-bottom: 1.4rem; line-height: 1.55; }
+  .demo-modal .actions {
+    display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap;
+  }
+  .demo-modal .btn-buy {
+    background: linear-gradient(135deg, #00ff88, #00cfff);
+    color: #001a0c;
+    padding: 0.8rem 1.4rem;
+    border: none; border-radius: 6px;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: 700; font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,255,136,0.4);
+  }
+  .demo-modal .btn-close {
+    background: transparent;
+    border: 1px solid rgba(0,207,255,0.5);
+    color: #00cfff;
+    padding: 0.8rem 1.4rem;
+    border-radius: 6px;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: 700; font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+  }
+  .demo-modal .btn-buy:hover, .demo-modal .btn-buy:focus,
+  .demo-modal .btn-close:hover, .demo-modal .btn-close:focus {
+    filter: brightness(1.1);
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+  }
+</style>
+<script>
+  // Dynamisches Manifest für PWA-Installation
+  (function() {
+    const manifest = {
+      name: "RootGuide",
+      short_name: "RootGuide",
+      description: "Dein smarter Pflanzen- & Dünger-Kompass mit Krankheitsbibliothek und Pflanzabständen",
+      start_url: ".",
+      display: "standalone",
+      theme_color: "#00ff88",
+      background_color: "#0a0d12",
+      icons: [
+        { src: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgc3Ryb2tlPSIjMDBmZjg4IiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNNTAgMjUgTDUwIDQ1IEw3MCAzMCBMNTAgNDUgTDUwIDc1IEwzMCA2MCBMNTAgNzUgTDUwIDQ1IiBzdHJva2U9IiMwMGZmODgiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDUiIHI9IjMiIGZpbGw9IiMwMGZmODgiLz48cGF0aCBkPSJNNTAgNDUgTDM1IDU1IEwyMCA0NSBMMzUgNTUgTDUwIDQ1IiBzdHJva2U9IiMwMGZmODgiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==", sizes: "any", type: "image/svg+xml", purpose: "any" },
+        { src: "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0NSIgc3Ryb2tlPSIjMDBmZjg4IiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNNTAgMjUgTDUwIDQ1IEw3MCAzMCBMNTAgNDUgTDUwIDc1IEwzMCA2MCBMNTAgNzUgTDUwIDQ1IiBzdHJva2U9IiMwMGZmODgiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDUiIHI9IjMiIGZpbGw9IiMwMGZmODgiLz48cGF0aCBkPSJNNTAgNDUgTDM1IDU1IEwyMCA0NSBMMzUgNTUgTDUwIDQ1IiBzdHJva2U9IiMwMGZmODgiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==", sizes: "512x512", type: "image/svg+xml", purpose: "maskable" }
+      ]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+    const manifestURL = URL.createObjectURL(manifestBlob);
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = manifestURL;
+    document.head.appendChild(link);
+  })();
+</script>
+</head>
+<body>
+
+<!-- ===== DEMO-BANNER ===== -->
+<div class="demo-banner" role="banner" aria-label="Demo-Hinweis">
+  🌱 DEMO-VERSION &middot; Inhalte ausgeblendet &middot;
+  <a href="https://www.gz-ai-stacks.de/RootGuide/" target="_blank" rel="noopener">Vollversion auf gz-ai-stacks.de</a>
+</div>
+
+<!-- ===== DEMO-MODAL ===== -->
+<div class="demo-modal-backdrop" id="demoModal" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle">
+  <div class="demo-modal">
+    <div class="ic" aria-hidden="true">🔒</div>
+    <h3 id="demoModalTitle">Vollversion erforderlich</h3>
+    <p id="demoModalText">Diese Funktion ist nur in der Vollversion verfügbar. In der Demo siehst du den Aufbau und die Bedienung &mdash; die Inhalte und Speicher-Funktionen sind der Vollversion vorbehalten.</p>
+    <div class="actions">
+      <a class="btn-buy" href="https://www.gz-ai-stacks.de/RootGuide/" target="_blank" rel="noopener">🛒 Vollversion kaufen</a>
+      <button type="button" class="btn-close" id="demoModalClose">Zurück zur Demo</button>
+    </div>
+  </div>
+</div>
+
+<div id="bootScreen">
+  <canvas id="matrixCanvas"></canvas>
+  <div class="boot-terminal">
+    <div class="boot-line info">[SYSTEM] RootGuide v7.0 – Tagebuch & Multi-Dünger</div>
+    <div class="boot-line success">[OK] Datenbank geladen (50+ Pflanzen mit Abständen)</div>
+    <div class="boot-line success">[OK] Dünger-Profile: Athena, Canna, BioBizz, Hesi, AN</div>
+    <div class="boot-line success">[OK] Grow-Tagebuch & lokaler Speicher aktiv</div>
+    <div class="boot-line success">[OK] Krankheitsbibliothek aktiv</div>
+    <div class="boot-line success">[RDY] System online</div>
+  </div>
+  <div class="boot-progress-wrap"><div class="boot-progress-bg"><div class="boot-progress-bar" id="bootBar"></div></div><div class="boot-progress-text" id="bootPercent">0%</div></div>
+  <div class="boot-title-reveal" id="bootTitle">ROOTGUIDE</div>
+</div>
+
+<div class="wrapper" id="app">
+  <header>
+    <div class="logo-area">
+      <svg class="logo-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45"></circle>
+        <path d="M50 25 L50 45 L70 30 L50 45 L50 75 L30 60 L50 75 L50 45"></path>
+        <circle cx="50" cy="45" r="3" fill="var(--neon)"></circle>
+        <path d="M50 45 L35 55 L20 45 L35 55 L50 45"></path>
+      </svg>
+      <div class="logo-text">
+        <h1>🌱 ROOTGUIDE</h1>
+        <div class="sub">PFLANZABSTÄNDE · DÜNGER · KRANKHEITEN</div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="zoom-group"><button class="btn" onclick="changeZoom(-0.1)">−</button><div class="zoom-level" id="zoomLabel">100%</div><button class="btn" onclick="changeZoom(0.1)">+</button></div>
+      <button class="btn" onclick="resetZoom()">RESET</button>
+      <button class="btn" id="themeBtn" onclick="toggleTheme()">☀️ HELL</button>
+      <button class="btn" id="tourBtn" onclick="startTour()" aria-label="App-Tour starten">🧭 TOUR</button>
+    </div>
+  </header>
+
+  <div class="info-bar">
+    <div class="info-card"><div class="label">PFLANZEN</div><div class="value" id="plantCount">0</div></div>
+    <div class="info-card"><div class="label">AKTUELLE PHASE</div><div class="value" id="phaseDisplay">VEG</div></div>
+    <div class="info-card"><div class="label">EMPFEHLUNG EC</div><div class="value" id="ecRecommend">--</div></div>
+  </div>
+
+  <!-- KRANKHEITSBIBLIOTHEK -->
+  <div class="input-section">
+    <div class="section-title"><span class="pill" style="background:var(--neon3);"></span><span>🌿 KRANKHEITSBIBLIOTHEK</span></div>
+    <div class="input-body">
+      <div class="search-box"><input type="text" id="diseaseSearch" placeholder="🔍 Krankheit suchen"></div>
+      <div class="select-group"><label>Krankheit</label><select id="diseaseSelect"></select></div>
+      <div class="note-area" id="diseaseInfo"><strong>📋 Krankheitsdatenbank</strong><br>Wähle eine Krankheit aus.</div>
+    </div>
+  </div>
+
+  <!-- PFLANZENBEREICH mit Abstandsanzeige -->
+  <div class="input-section">
+    <div class="section-title"><span class="pill"></span><span>PFLANZE & PHASE</span></div>
+    <div class="input-body">
+      <div class="search-box"><input type="text" id="searchInput" placeholder="🔍 Pflanze suchen (Name, Substrat, Notiz)"></div>
+      <div class="select-group"><label>Pflanze</label><select id="plantSelect"></select></div>
+      <div class="action-buttons">
+        <button class="action-btn" id="editBtn">✏️ Bearbeiten</button>
+        <button class="action-btn delete-btn" id="deleteBtn">🗑️ Löschen</button>
+      </div>
+      <div class="phase-toggle">
+        <button class="phase-btn" id="btnSeed">🌱 JUNGPFLANZE</button>
+        <button class="phase-btn active-veg" id="btnVeg">🌿 VEGETATIV</button>
+        <button class="phase-btn" id="btnBloom">🌸 BLÜTE/FRUCHT</button>
+      </div>
+      <div class="value-grid">
+        <div class="value-card"><div class="value-label">pH OPTIMAL</div><div class="value-number" id="phValue">--</div></div>
+        <div class="value-card"><div class="value-label">EC OPTIMAL</div><div class="value-number" id="ecValue">--</div></div>
+        <div class="value-card"><div class="value-label">SPÜL-EC</div><div class="value-number">&lt; 0.4</div></div>
+        <div class="value-card" style="border-top:3px solid var(--neon2);"><div class="value-label">LICHT</div><div class="value-number" id="lightValue" style="font-size:20px;">--</div></div>
+      </div>
+      <div class="note-area" id="plantNote"></div>
+    </div>
+  </div>
+
+  <!-- EIGENE PFLANZE HINZUFÜGEN / BEARBEITEN (mit Abstands-Feldern) -->
+  <div class="input-section">
+    <div class="section-title"><span class="pill" style="background:var(--neon2);"></span><span id="formTitle">➕ EIGENE PFLANZE HINZUFÜGEN</span></div>
+    <div class="input-body">
+      <div class="form-row">
+        <div class="form-group"><label>ICON *</label><select id="newIconSelect"></select><div class="icon-preview" id="iconPreview">🌱</div></div>
+        <div class="form-group"><label>NAME *</label><input type="text" id="newName" placeholder="z.B. Walnuss"></div>
+        <div class="form-group"><label>SUBSTRAT *</label><select id="newSubstrate"><option>Erde</option><option>Steinwolle</option><option>Cocos</option></select></div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+        <div class="form-group"><label>📏 Reihenabstand (cm)</label><input type="number" id="newRowSpacing" placeholder="z.B. 30"></div>
+        <div class="form-group"><label>📏 Pflanzenabstand (cm)</label><input type="number" id="newPlantSpacing" placeholder="z.B. 20"></div>
+        <div class="form-group"><label>📏 Topf-Ø (cm)</label><input type="number" id="newPotSize" placeholder="z.B. 15"></div>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 16px;">
+        <div style="border-left: 3px solid var(--neon2); padding-left: 12px;">
+          <h4>🌱 JUNGPFLANZE</h4>
+          <div class="form-row"><div class="form-group"><label>pH min</label><input type="number" step="0.1" id="newPhMinSeed" placeholder="optional"></div><div class="form-group"><label>pH max</label><input type="number" step="0.1" id="newPhMaxSeed" placeholder="optional"></div></div>
+          <div class="form-row"><div class="form-group"><label>EC min</label><input type="number" step="0.1" id="newEcMinSeed" placeholder="optional"></div><div class="form-group"><label>EC max</label><input type="number" step="0.1" id="newEcMaxSeed" placeholder="optional"></div></div>
+        </div>
+        <div style="border-left: 3px solid var(--neon); padding-left: 12px;">
+          <h4>🌿 VEGETATIV</h4>
+          <div class="form-row"><div class="form-group"><label>pH min</label><input type="number" step="0.1" id="newPhMinVeg" placeholder="5.5"></div><div class="form-group"><label>pH max</label><input type="number" step="0.1" id="newPhMaxVeg" placeholder="6.5"></div></div>
+          <div class="form-row"><div class="form-group"><label>EC min</label><input type="number" step="0.1" id="newEcMinVeg" placeholder="0.8"></div><div class="form-group"><label>EC max</label><input type="number" step="0.1" id="newEcMaxVeg" placeholder="1.4"></div></div>
+        </div>
+        <div style="border-left: 3px solid var(--neon-bloom); padding-left: 12px;">
+          <h4>🌸 BLÜTE/FRUCHT</h4>
+          <div class="form-row"><div class="form-group"><label>pH min</label><input type="number" step="0.1" id="newPhMinBloom" placeholder="5.5"></div><div class="form-group"><label>pH max</label><input type="number" step="0.1" id="newPhMaxBloom" placeholder="6.5"></div></div>
+          <div class="form-row"><div class="form-group"><label>EC min</label><input type="number" step="0.1" id="newEcMinBloom" placeholder="1.2"></div><div class="form-group"><label>EC max</label><input type="number" step="0.1" id="newEcMaxBloom" placeholder="2.0"></div></div>
+        </div>
+      </div>
+      <div style="border-left: 3px solid var(--neon2); padding-left: 12px; margin-bottom: 16px;">
+        <h4>☀️ LICHTBEDARF · PPFD (µmol/m²/s) — optional, selbst eintragen</h4>
+        <div class="form-row"><div class="form-group"><label>🌱 Jungpflanze min</label><input type="number" id="newPpfdMinSeed" placeholder="optional"></div><div class="form-group"><label>🌱 Jungpflanze max</label><input type="number" id="newPpfdMaxSeed" placeholder="optional"></div></div>
+        <div class="form-row"><div class="form-group"><label>🌿 Vegetativ min</label><input type="number" id="newPpfdMinVeg" placeholder="optional"></div><div class="form-group"><label>🌿 Vegetativ max</label><input type="number" id="newPpfdMaxVeg" placeholder="optional"></div></div>
+        <div class="form-row"><div class="form-group"><label>🌸 Blüte min</label><input type="number" id="newPpfdMinBloom" placeholder="optional"></div><div class="form-group"><label>🌸 Blüte max</label><input type="number" id="newPpfdMaxBloom" placeholder="optional"></div></div>
+      </div>
+      <div class="form-row"><div class="form-group"><label>NOTIZ (optional)</label><input type="text" id="newNote" placeholder="z.B. kälteempfindlich"></div></div>
+      <button class="calc-btn" id="addPlantBtn" style="background:var(--neon2);">🌱 PFLANZE SPEICHERN</button>
+      <div class="warning" id="addWarning"></div>
+    </div>
+  </div>
+
+  <!-- DÜNGERRECHNER (Multi-Marke) -->
+  <div class="input-section">
+    <div class="section-title"><span class="pill" style="background:var(--neon2);"></span><span>DÜNGER-DOSIERUNG</span></div>
+    <div class="input-body">
+      <div class="select-group"><label>DÜNGER-MARKE</label><select id="brandSelect"></select></div>
+      <div class="form-row">
+        <div class="form-group"><label>ZIEL EC (mS/cm)</label><input type="number" id="targetEC" step="0.1" placeholder="z. B. 3.0"></div>
+        <div class="form-group"><label>WASSER (Liter)</label><input type="text" id="litersInput" placeholder="z. B. 5, 10, 20"></div>
+      </div>
+      <div id="stockVolGroup">
+        <div class="form-row">
+          <div class="form-group"><label>PULVER (g)</label><input type="number" id="stockPowder" step="1" value="900" placeholder="900"></div>
+          <div class="form-group"><label>GELÖST IN WASSER (L)</label><input type="number" id="stockVol" step="0.01" value="3.97" placeholder="3.97"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-dim);margin:-8px 0 12px;font-family:'Share Tech Mono';">Athena-Standard-Rezept = 900 g auf 3,97 L. Anders angesetzt (z.B. 900 g in 4 L, oder 1000 g in 4 L)? Beides hier eintragen → die Dosierung wird an deine echte Konzentration angepasst.</div>
+      </div>
+      <div class="quick-btns">
+        <button class="quick-btn" onclick="setLiters('1,2,3,4,5,6,7,8,9,10')">1er SCHRITTE</button>
+        <button class="quick-btn" onclick="setLiters('2,4,6,8,10,12,14,16,18,20')">2er SCHRITTE</button>
+        <button class="quick-btn" onclick="setLiters('1,5,10,15,20,25,30,35,40,45,50')">5er SCHRITTE</button>
+        <button class="quick-btn" onclick="setLiters('5,10,20,50')">KOMPAKT</button>
+      </div>
+      <button class="calc-btn" id="calcBtn">BERECHNEN</button>
+      <div id="resultArea"></div>
+      <div class="note-area" style="margin-top:16px;" id="brandNote"></div>
+    </div>
+  </div>
+
+  <!-- GROW-TAGEBUCH -->
+  <div class="input-section">
+    <div class="section-title"><span class="pill" style="background:var(--neon-bloom);"></span><span>📔 GROW-TAGEBUCH</span></div>
+    <div class="input-body">
+      <div class="form-row">
+        <div class="form-group"><label>DATUM</label><input type="date" id="logDate"></div>
+        <div class="form-group"><label>PFLANZE</label><input type="text" id="logPlant" placeholder="z.B. Tomate #1"></div>
+        <div class="form-group"><label>PHASE</label><select id="logPhase"><option value="Vegetativ">🌱 Vegetativ</option><option value="Blüte/Frucht">🌸 Blüte/Frucht</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>WASSER (L)</label><input type="number" step="0.1" id="logWater" placeholder="z.B. 2"></div>
+        <div class="form-group"><label>pH GEMESSEN</label><input type="number" step="0.1" id="logPh" placeholder="z.B. 6.2"></div>
+        <div class="form-group"><label>EC GEMESSEN</label><input type="number" step="0.1" id="logEc" placeholder="z.B. 1.8"></div>
+      </div>
+      <div class="form-row"><div class="form-group"><label>NOTIZ</label><input type="text" id="logNote" placeholder="z.B. umgetopft, Blätter leicht gelb..."></div></div>
+      <div class="form-group" style="margin-bottom:16px;">
+        <label>📷 FOTO (optional, wird verkleinert)</label>
+        <div class="phase-toggle" style="margin-bottom:10px;">
+          <button type="button" class="phase-btn active-veg" id="photoSrcFile">📁 DATEI</button>
+          <button type="button" class="phase-btn" id="photoSrcCam">📷 LIVE-KAMERA</button>
+          <button type="button" class="phase-btn" id="photoSrcIp">🌐 IP-CAM</button>
+        </div>
+        <div id="photoPaneFile"><input type="file" id="logPhoto" accept="image/*"></div>
+        <div id="photoPaneCam" style="display:none;">
+          <select id="camDevice" style="margin-bottom:8px;"></select>
+          <video id="camPreview" playsinline muted style="width:100%;max-width:320px;border:1px solid var(--border2);background:#000;display:block;"></video>
+          <div class="action-buttons" style="margin-top:8px;">
+            <button type="button" class="action-btn" id="camStartBtn">▶️ Kamera starten</button>
+            <button type="button" class="action-btn" id="camSnapBtn">📸 Aufnehmen</button>
+            <button type="button" class="action-btn delete-btn" id="camStopBtn">⏹ Stop</button>
+          </div>
+        </div>
+        <div id="photoPaneIp" style="display:none;">
+          <input type="text" id="ipCamUrl" placeholder="z.B. http://192.168.1.50:8080/shot.jpg" style="margin-bottom:8px;">
+          <div class="action-buttons"><button type="button" class="action-btn" id="ipGrabBtn">🌐 Bild holen</button></div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:4px;font-family:'Share Tech Mono';">Für Cams, die ein JPEG per HTTP liefern (ESP32-CAM <code>/capture</code>, „IP Webcam"-App <code>/shot.jpg</code>) und CORS erlauben. Reine http://-Cams werden auf der HTTPS-Seite ggf. blockiert.</div>
+        </div>
+        <div id="photoPreviewWrap" style="display:none;margin-top:10px;">
+          <img id="photoPreview" alt="Vorschau" style="width:96px;height:96px;object-fit:cover;border:1px solid var(--neon);vertical-align:top;">
+          <button type="button" class="action-btn delete-btn" id="photoClearBtn" style="margin-left:8px;">✖ Foto entfernen</button>
+        </div>
+      </div>
+      <button class="calc-btn" id="addLogBtn" style="background:var(--neon-bloom);">📔 EINTRAG SPEICHERN</button>
+      <div class="warning" id="logWarning"></div>
+      <div class="search-box" style="margin-top:16px;"><input type="text" id="logSearch" placeholder="🔍 Tagebuch durchsuchen (Pflanze, Notiz)"></div>
+      <div id="logList"></div>
+    </div>
+  </div>
+
+  <!-- TIMELAPSE / INTERVALL-AUFNAHME -->
+  <div class="input-section">
+    <div class="section-title"><span class="pill" style="background:var(--neon2);"></span><span>⏱ TIMELAPSE / INTERVALL-AUFNAHME</span></div>
+    <div class="input-body">
+      <div class="form-row">
+        <div class="form-group"><label>QUELLE</label><select id="tlSource"><option value="live">📷 Live-Kamera</option><option value="ip">🌐 IP-Cam</option></select></div>
+        <div class="form-group"><label>ALLE</label><input type="number" id="tlInterval" min="1" value="5"></div>
+        <div class="form-group"><label>EINHEIT</label><select id="tlIntervalUnit"><option value="sec">Sekunden</option><option value="min" selected>Minuten</option></select></div>
+        <div class="form-group"><label>ANZAHL BILDER (0 = bis Stop)</label><input type="number" id="tlCount" min="0" value="60"></div>
+      </div>
+      <div id="tlIpRow" class="form-row" style="display:none;"><div class="form-group"><label>IP-CAM-URL</label><input type="text" id="tlIpUrl" placeholder="http://localhost:8770/snapshot.jpg"></div></div>
+      <div class="note-area" id="tlEstimate"></div>
+      <div class="action-buttons">
+        <button class="action-btn" id="tlStartBtn">▶️ Start</button>
+        <button class="action-btn delete-btn" id="tlStopBtn" disabled>⏹ Stop</button>
+      </div>
+      <div class="note-area" id="tlStatus" style="display:none;"></div>
+      <div class="warning" id="tlWarning"></div>
+
+      <div class="section-title" style="margin:18px 0 0; padding-left:0; background:transparent; border:none;"><span>🎞 GALERIE (<span id="tlGalleryCount">0</span> Bilder)</span></div>
+      <div class="action-buttons">
+        <button class="action-btn" id="tlPlayBtn">▶️ Abspielen</button>
+        <button class="action-btn" id="tlPauseBtn">⏸ Stop</button>
+        <span style="display:flex;align-items:center;gap:6px;font-family:'Share Tech Mono';font-size:12px;">Tempo <select id="tlSpeed" style="width:auto;padding:6px;"><option value="2">2/s</option><option value="4" selected>4/s</option><option value="8">8/s</option><option value="15">15/s</option></select></span>
+        <button class="action-btn" id="tlShareBtn">📤 Bild teilen</button>
+        <button class="action-btn delete-btn" id="tlClearBtn">🗑 Alle löschen</button>
+      </div>
+      <img id="tlPlayer" alt="" style="display:none;width:100%;max-width:360px;border:1px solid var(--neon);margin:10px 0;">
+      <div id="tlPlayInfo" style="font-family:'Share Tech Mono';color:var(--text-dim);font-size:12px;"></div>
+      <div id="tlGallery" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;"></div>
+      <div style="font-size:11px;color:var(--text-dim);margin-top:8px;font-family:'Share Tech Mono';">💡 Bild anklicken = ins Tagebuch übernehmen. Läuft nur, solange die Seite offen & das Gerät wach ist (Bildschirm wird per Wake-Lock wachgehalten). Bilder liegen lokal (IndexedDB), getrennt vom Tagebuch.</div>
+    </div>
+  </div>
+
+  <!-- IMPORT / EXPORT mit Ordnerauswahl -->
+  <div class="input-section">
+    <div class="section-title"><span class="pill" style="background:var(--neon3);"></span><span>📁 DATENBANK IMPORT/EXPORT</span></div>
+    <div class="input-body">
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <button class="quick-btn" id="exportBtn">📁 EXPORTIEREN (Ordner wählen)</button>
+        <button class="quick-btn" id="importBtnTrigger">📂 IMPORTIEREN</button>
+        <button class="quick-btn delete-btn" id="resetPlantsBtn">♻️ STANDARD-PFLANZEN</button>
+        <input type="file" id="importFileInput" accept=".json" style="display:none;">
+      </div>
+      <div class="warning" id="importExportWarning"></div>
+    </div>
+  </div>
+  <div class="footer-note">🌱 RootGuide v7.0 – Installierbare PWA | Multi-Dünger · Grow-Tagebuch · Pflanzabstände | Offline & lokal gespeichert</div>
+</div>
+
+<script>
+// ========== DEMO-MODE STEUERUNG ==========
+window.RG_DEMO = true;
+function showDemoModal(text) {
+  const modal = document.getElementById('demoModal');
+  if (!modal) return;
+  if (text) {
+    const txtEl = document.getElementById('demoModalText');
+    if (txtEl) txtEl.textContent = text;
+  }
+  modal.classList.add('show');
+}
+function closeDemoModal() {
+  const modal = document.getElementById('demoModal');
+  if (modal) modal.classList.remove('show');
+}
+document.addEventListener('DOMContentLoaded', function() {
+  const closeBtn = document.getElementById('demoModalClose');
+  if (closeBtn) closeBtn.addEventListener('click', closeDemoModal);
+  const modal = document.getElementById('demoModal');
+  if (modal) modal.addEventListener('click', function(e) {
+    if (e.target === modal) closeDemoModal();
+  });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal && modal.classList.contains('show')) closeDemoModal();
+  });
+
+  // Speicher-/Aktions-Buttons auf Demo-Modal umleiten
+  const blockIds = [
+    'addPlantBtn', 'editBtn', 'deleteBtn',
+    'addLogBtn', 'calcBtn',
+    'exportBtn', 'importBtnTrigger', 'resetPlantsBtn',
+    'camStartBtn', 'camSnapBtn', 'ipGrabBtn',
+    'tlStartBtn', 'tlPlayBtn', 'tlShareBtn', 'tlClearBtn',
+    'photoSrcFile', 'photoSrcCam', 'photoSrcIp'
+  ];
+  blockIds.forEach(function(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      showDemoModal();
+    }, true);
+  });
+});
+
+// ========== BOOT ==========
+(function() {
+  const canvas = document.getElementById('matrixCanvas');
+  const ctx = canvas.getContext('2d');
+  let w, h, cols, drops; const chars = '01アイウエオ'; const fontSize = 12;
+  function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; cols = Math.floor(w / fontSize); drops = new Array(cols).fill(1); }
+  resize(); window.addEventListener('resize', resize);
+  function draw() { ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#00ff4140'; ctx.font = fontSize + 'px monospace'; for (let i=0;i<cols;i++) { ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*fontSize, drops[i]*fontSize); if (drops[i]*fontSize > h && Math.random()>0.975) drops[i]=0; drops[i]++; } }
+  const matrixInterval = setInterval(draw, 40);
+  const bar = document.getElementById('bootBar'); const pct = document.getElementById('bootPercent'); const title = document.getElementById('bootTitle'); const boot = document.getElementById('bootScreen'); const app = document.getElementById('app');
+  let progress = 0; const interval = setInterval(() => { progress += 10; bar.style.width = progress+'%'; pct.textContent = progress+'%'; if (progress>=100) { clearInterval(interval); setTimeout(() => { title.classList.add('visible'); }, 200); setTimeout(() => { clearInterval(matrixInterval); boot.style.opacity='0'; setTimeout(() => { boot.style.display='none'; app.classList.add('visible'); }, 600); }, 1800); } }, 100);
+})();
+
+// ========== THEME & ZOOM ==========
+let zoom = 1;
+function changeZoom(delta) { zoom = Math.min(2, Math.max(0.4, +(zoom+delta).toFixed(1))); document.documentElement.style.setProperty('--zoom', zoom); document.getElementById('zoomLabel').innerText = Math.round(zoom*100)+'%'; }
+function resetZoom() { zoom = 1; document.documentElement.style.setProperty('--zoom', zoom); document.getElementById('zoomLabel').innerText = '100%'; }
+function applyTheme(theme) { const html = document.documentElement; const btn = document.getElementById('themeBtn'); html.dataset.theme = theme; btn.innerHTML = theme === 'light' ? '🌙 DUNKEL' : '☀️ HELL'; }
+function toggleTheme() { const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; applyTheme(next); try { localStorage.setItem('rootguide_theme', next); } catch(e){} }
+
+// ========== ICONS ==========
+const ICON_LIST = [
+  { emoji: "🍎", label: "Apfel" }, { emoji: "🍑", label: "Aprikose" }, { emoji: "🥑", label: "Avocado" }, { emoji: "🌿", label: "Basilikum" }, { emoji: "🍐", label: "Birne" },
+  { emoji: "🥦", label: "Brokkoli" }, { emoji: "🍇", label: "Brombeere" }, { emoji: "🌶️", label: "Chili" }, { emoji: "🌿", label: "Dill" }, { emoji: "🍓", label: "Erdbeere" },
+  { emoji: "🌰", label: "Esskastanie" }, { emoji: "🪴", label: "Feige" }, { emoji: "🍎", label: "Granatapfel" }, { emoji: "🍊", label: "Grapefruit" }, { emoji: "🥒", label: "Gurke" },
+  { emoji: "🌿", label: "Hanf" }, { emoji: "🌰", label: "Haselnuss" }, { emoji: "🫐", label: "Heidelbeere" }, { emoji: "🍇", label: "Himbeere" }, { emoji: "🔴", label: "Johannisbeere" },
+  { emoji: "🟤", label: "Jujube" }, { emoji: "🍊", label: "Kaki" }, { emoji: "🥕", label: "Karotte" }, { emoji: "🍒", label: "Kirsche" }, { emoji: "🌿", label: "Koriander" },
+  { emoji: "🎃", label: "Kürbis" }, { emoji: "🌸", label: "Lavendel" }, { emoji: "🍈", label: "Limette" }, { emoji: "🌰", label: "Mandel" }, { emoji: "🍊", label: "Mandarine" },
+  { emoji: "🥭", label: "Mango" }, { emoji: "🍇", label: "Maulbeere" }, { emoji: "🍈", label: "Melone" }, { emoji: "🌱", label: "Minze" }, { emoji: "🍐", label: "Nashi" },
+  { emoji: "🫒", label: "Olive" }, { emoji: "🍊", label: "Orange" }, { emoji: "🌿", label: "Oregano" }, { emoji: "🟠", label: "Papaya" }, { emoji: "🫑", label: "Paprika" },
+  { emoji: "🌿", label: "Petersilie" }, { emoji: "🍑", label: "Pfirsich" }, { emoji: "🍐", label: "Pflaume" }, { emoji: "🌰", label: "Pistazie" }, { emoji: "🍐", label: "Quitte" },
+  { emoji: "🌿", label: "Rosmarin" }, { emoji: "🥬", label: "Salat" }, { emoji: "🌿", label: "Salbei" }, { emoji: "🌿", label: "Schnittlauch" }, { emoji: "🟢", label: "Stachelbeere" },
+  { emoji: "🌿", label: "Thymian" }, { emoji: "🍅", label: "Tomate" }, { emoji: "🌰", label: "Walnuss" }, { emoji: "🍋", label: "Zitrone" }, { emoji: "🌿", label: "Zitronenmelisse" }, { emoji: "🥒", label: "Zucchini" }
+];
+ICON_LIST.sort((a,b)=>a.label.localeCompare(b.label));
+function initIconSelect() {
+  const sel = document.getElementById('newIconSelect'); sel.innerHTML='';
+  ICON_LIST.forEach(i=>{ let opt=document.createElement('option'); opt.value=i.emoji; opt.textContent=`${i.emoji} ${i.label}`; sel.appendChild(opt); });
+  sel.addEventListener('change',()=>document.getElementById('iconPreview').innerText=sel.value);
+  sel.value='🌱'; document.getElementById('iconPreview').innerText='🌱';
+}
+
+// ========== KRANKHEITSDATENBANK (unverändert) ==========
+const DISEASE_DB = [
+  { name:"DEMO Krankheit (Beispiel)", symptoms:"Symptom-Text wird in der Vollversion angezeigt.", causes:"Ursachen-Text wird in der Vollversion angezeigt.", treatment:"Behandlungs-Text wird in der Vollversion angezeigt.", prevention:"Vorbeugungs-Text wird in der Vollversion angezeigt. Insgesamt 20+ Krankheiten und Schaedlinge in der Vollversion." }
+];
+let diseaseSearchTerm="";
+function getFilteredDiseases() { if(!diseaseSearchTerm) return DISEASE_DB; const t=diseaseSearchTerm.toLowerCase(); return DISEASE_DB.filter(d=>d.name.toLowerCase().includes(t)||d.symptoms.toLowerCase().includes(t)); }
+function refreshDiseaseSelect() {
+  const f=getFilteredDiseases(); const sel=document.getElementById('diseaseSelect'); sel.innerHTML='';
+  f.forEach(d=>{ let opt=document.createElement('option'); opt.value=d.name; opt.textContent=d.name; sel.appendChild(opt); });
+  if(f.length) { sel.value=f[0].name; updateDiseaseDisplay(f[0]); } else document.getElementById('diseaseInfo').innerHTML='<strong>⚠️ Keine Krankheit gefunden</strong>';
+}
+function updateDiseaseDisplay(d) { document.getElementById('diseaseInfo').innerHTML=`<strong>📌 ${d.name}</strong><br><br>🩺 Symptome: ${d.symptoms}<br><br>🔬 Ursachen: ${d.causes}<br><br>💊 Behandlung: ${d.treatment}<br><br>🛡️ Vorbeugung: ${d.prevention}`; }
+
+// ========== PFLANZEN-DATENBANK MIT ABSTÄNDEN ==========
+const DEFAULT_PLANTS = [
+  { icon:"🍅", name:"Beispiel-Tomate (Demo)", substrate:"Demo", row_spacing:99, plant_spacing:99, pot_size:99, veg:{ph_min:0.0,ph_max:9.9,ec_min:0.0,ec_max:9.9}, bloom:{ph_min:0.0,ph_max:9.9,ec_min:0.0,ec_max:9.9}, note:"Werte nur in Vollversion sichtbar" },
+  { icon:"🌶️", name:"Beispiel-Chili (Demo)", substrate:"Demo", row_spacing:99, plant_spacing:99, pot_size:99, veg:{ph_min:0.0,ph_max:9.9,ec_min:0.0,ec_max:9.9}, bloom:{ph_min:0.0,ph_max:9.9,ec_min:0.0,ec_max:9.9}, note:"Werte nur in Vollversion sichtbar" },
+  { icon:"🌿", name:"Beispiel-Basilikum (Demo)", substrate:"Demo", row_spacing:99, plant_spacing:99, pot_size:99, veg:{ph_min:0.0,ph_max:9.9,ec_min:0.0,ec_max:9.9}, bloom:{ph_min:0.0,ph_max:9.9,ec_min:0.0,ec_max:9.9}, note:"Werte nur in Vollversion sichtbar" }
+];
+DEFAULT_PLANTS.sort((a,b)=>a.name.localeCompare(b.name));
+
+// ========== LICHTBEDARF (PPFD + DLI, 3 Phasen) ==========
+// PPFD-Werte liegen pro Pflanze in plant.ppfd = { seed:{min,max}, veg:{min,max}, bloom:{min,max} }.
+// Vom Nutzer selbst eingetragen (kein Default). Fehlende Phasen zeigen "k.A.".
+// DLI = PPFD x Photoperiode(h) x 3600 / 1e6.
+const PPFD_PHASES = [
+  { key:'seed',  label:'🌱 Jungpflanze', hours:18 },
+  { key:'veg',   label:'🌿 Vegetativ',   hours:18 },
+  { key:'bloom', label:'🌸 Blüte',       hours:12 }
+];
+function dliFrom(ppfd,h){ return +(ppfd*h*3600/1e6).toFixed(1); }
+function normalizeLight(p){ return p; }
+
+let currentPlants=[], currentPhase='veg', editMode=false, editingPlantId=null, searchTerm='';
+function savePlants(){ try{ localStorage.setItem('rootguide_plants', JSON.stringify(currentPlants)); }catch(e){} }
+function loadPlants(){ try{ const s=JSON.parse(localStorage.getItem('rootguide_plants')); if(Array.isArray(s)&&s.length) return s; }catch(e){} return null; }
+function resetPlants(){
+  if(!confirm('Alle eigenen Pflanzen verwerfen und die 56 Standard-Pflanzen wiederherstellen?')) return;
+  currentPlants=DEFAULT_PLANTS.map(p=>({...p,id:genId(p.name)})); currentPlants.forEach(normalizeLight); sortPlants(); savePlants(); refreshSelect();
+  const w=document.getElementById('importExportWarning'); w.innerText='♻️ Standard-Pflanzen wiederhergestellt.'; w.style.display='block'; setTimeout(()=>w.style.display='none',2000);
+}
+function sortPlants() { currentPlants.sort((a,b)=>a.name.localeCompare(b.name)); }
+function genId(name){ return name.toLowerCase().replace(/[^a-z0-9]/g,'')+'_'+Date.now()+'_'+Math.floor(Math.random()*1000); }
+function updateStats(){ document.getElementById('plantCount').innerText=currentPlants.length; }
+function getFilteredPlants(){ if(!searchTerm) return currentPlants; const t=searchTerm.toLowerCase(); return currentPlants.filter(p=>p.name.toLowerCase().includes(t)||p.substrate.toLowerCase().includes(t)||(p.note&&p.note.toLowerCase().includes(t))); }
+function refreshSelect(){
+  const f=getFilteredPlants(), old=document.getElementById('plantSelect').value, sel=document.getElementById('plantSelect');
+  sel.innerHTML=''; f.forEach(p=>{ let opt=document.createElement('option'); opt.value=p.id; opt.textContent=`${p.icon||'🌿'} ${p.name} [${p.substrate}]`; sel.appendChild(opt); });
+  if(old && f.some(p=>p.id===old)) sel.value=old; else if(f.length) sel.value=f[0].id;
+  updateDisplay(); updateStats();
+}
+function updateDisplay(){
+  const id=document.getElementById('plantSelect').value, plant=getFilteredPlants().find(p=>p.id===id);
+  if(!plant) return;
+  const d=plant[currentPhase];
+  if(d&&Number.isFinite(d.ph_min)&&Number.isFinite(d.ph_max)){
+    document.getElementById('phValue').innerHTML=`${d.ph_min.toFixed(1)} – ${d.ph_max.toFixed(1)}`;
+    document.getElementById('ecValue').innerHTML=`${d.ec_min.toFixed(1)} – ${d.ec_max.toFixed(1)}`;
+    document.getElementById('ecRecommend').innerHTML=`${d.ec_min.toFixed(1)} – ${d.ec_max.toFixed(1)}`;
+  } else {
+    document.getElementById('phValue').innerHTML='k.A.';
+    document.getElementById('ecValue').innerHTML='k.A.';
+    document.getElementById('ecRecommend').innerHTML='--';
+  }
+  // Lichtbedarf anzeigen: alle 3 Phasen gleichzeitig (vom Nutzer eingetragen, sonst k.A.)
+  const ppfd=plant.ppfd||{};
+  const rows=PPFD_PHASES.map(ph=>{
+    const v=ppfd[ph.key];
+    if(v&&Number.isFinite(v.min)&&Number.isFinite(v.max)){
+      return `<div style="margin-bottom:4px"><strong>${ph.label}:</strong> ${v.min}–${v.max} PPFD<br><span style="font-size:11px;opacity:.7">ca. ${dliFrom(v.min,ph.hours)}–${dliFrom(v.max,ph.hours)} DLI (${ph.hours}h)</span></div>`;
+    }
+    return `<div style="margin-bottom:4px;opacity:.5"><strong>${ph.label}:</strong> k.A.</div>`;
+  }).join('');
+  document.getElementById('lightValue').innerHTML=`<div style="font-size:13px;text-align:left">${rows}</div>`;
+  // Abstände anzeigen
+  let spacingHtml = "";
+  if(plant.row_spacing) spacingHtml += `📏 Reihenabstand: ${plant.row_spacing} cm | `;
+  if(plant.plant_spacing) spacingHtml += `Pflanzenabstand: ${plant.plant_spacing} cm | `;
+  if(plant.pot_size) spacingHtml += `Topf-Ø: ${plant.pot_size} cm`;
+  if(spacingHtml) spacingHtml = `<br>📐 ${spacingHtml}`;
+  const phaseLabel={seed:'Jungpflanze',veg:'Vegetativ',bloom:'Blüte/Frucht'}[currentPhase]||'Vegetativ';
+  document.getElementById('plantNote').innerHTML = `<strong>${plant.icon||'🌿'} ${plant.name}</strong> (${plant.substrate})<br>${plant.note}<br>🌱 Phase: ${phaseLabel}${spacingHtml}`;
+}
+function setPhase(phase){
+  currentPhase=phase;
+  document.getElementById('btnSeed').className=`phase-btn ${phase==='seed'?'active-seed':''}`;
+  document.getElementById('btnVeg').className=`phase-btn ${phase==='veg'?'active-veg':''}`;
+  document.getElementById('btnBloom').className=`phase-btn ${phase==='bloom'?'active-bloom':''}`;
+  document.getElementById('phaseDisplay').innerHTML={seed:'JUNG',veg:'VEG',bloom:'BLÜTE'}[phase]||'VEG';
+  updateDisplay(); calculateDosage();
+}
+function editCurrentPlant(){
+  const p=getFilteredPlants().find(p=>p.id===document.getElementById('plantSelect').value);
+  if(!p) return;
+  document.getElementById('newIconSelect').value=p.icon||'🌱'; document.getElementById('iconPreview').innerText=p.icon||'🌱';
+  document.getElementById('newName').value=p.name; document.getElementById('newSubstrate').value=p.substrate;
+  document.getElementById('newRowSpacing').value=p.row_spacing||'';
+  document.getElementById('newPlantSpacing').value=p.plant_spacing||'';
+  document.getElementById('newPotSize').value=p.pot_size||'';
+  document.getElementById('newPhMinSeed').value=p.seed?.ph_min??''; document.getElementById('newPhMaxSeed').value=p.seed?.ph_max??'';
+  document.getElementById('newEcMinSeed').value=p.seed?.ec_min??''; document.getElementById('newEcMaxSeed').value=p.seed?.ec_max??'';
+  document.getElementById('newPhMinVeg').value=p.veg.ph_min; document.getElementById('newPhMaxVeg').value=p.veg.ph_max;
+  document.getElementById('newEcMinVeg').value=p.veg.ec_min; document.getElementById('newEcMaxVeg').value=p.veg.ec_max;
+  document.getElementById('newPhMinBloom').value=p.bloom.ph_min; document.getElementById('newPhMaxBloom').value=p.bloom.ph_max;
+  document.getElementById('newEcMinBloom').value=p.bloom.ec_min; document.getElementById('newEcMaxBloom').value=p.bloom.ec_max;
+  const pp=p.ppfd||{};
+  document.getElementById('newPpfdMinSeed').value=pp.seed?.min??''; document.getElementById('newPpfdMaxSeed').value=pp.seed?.max??'';
+  document.getElementById('newPpfdMinVeg').value=pp.veg?.min??''; document.getElementById('newPpfdMaxVeg').value=pp.veg?.max??'';
+  document.getElementById('newPpfdMinBloom').value=pp.bloom?.min??''; document.getElementById('newPpfdMaxBloom').value=pp.bloom?.max??'';
+  document.getElementById('newNote').value=p.note||'';
+  editMode=true; editingPlantId=p.id;
+  const btn=document.getElementById('addPlantBtn'); btn.textContent="✏️ PFLANZE AKTUALISIEREN"; btn.style.background="var(--neon-bloom)";
+  document.getElementById('formTitle').innerHTML="✏️ PFLANZE BEARBEITEN";
+  const w=document.getElementById('addWarning'); w.innerText="✏️ Bearbeitungsmodus: Änderungen speichern mit 'Aktualisieren'."; w.style.display='block';
+}
+function savePlant(){
+  const icon=document.getElementById('newIconSelect').value, name=document.getElementById('newName').value.trim();
+  const substrate=document.getElementById('newSubstrate').value;
+  const rowSpacing=parseInt(document.getElementById('newRowSpacing').value) || null;
+  const plantSpacing=parseInt(document.getElementById('newPlantSpacing').value) || null;
+  const potSize=parseInt(document.getElementById('newPotSize').value) || null;
+  const sPhMin=parseFloat(document.getElementById('newPhMinSeed').value), sPhMax=parseFloat(document.getElementById('newPhMaxSeed').value);
+  const sEcMin=parseFloat(document.getElementById('newEcMinSeed').value), sEcMax=parseFloat(document.getElementById('newEcMaxSeed').value);
+  const vPhMin=parseFloat(document.getElementById('newPhMinVeg').value), vPhMax=parseFloat(document.getElementById('newPhMaxVeg').value);
+  const vEcMin=parseFloat(document.getElementById('newEcMinVeg').value), vEcMax=parseFloat(document.getElementById('newEcMaxVeg').value);
+  const bPhMin=parseFloat(document.getElementById('newPhMinBloom').value), bPhMax=parseFloat(document.getElementById('newPhMaxBloom').value);
+  const bEcMin=parseFloat(document.getElementById('newEcMinBloom').value), bEcMax=parseFloat(document.getElementById('newEcMaxBloom').value);
+  const ppfdPhases=[
+    {key:'seed',  min:parseInt(document.getElementById('newPpfdMinSeed').value),  max:parseInt(document.getElementById('newPpfdMaxSeed').value)},
+    {key:'veg',   min:parseInt(document.getElementById('newPpfdMinVeg').value),   max:parseInt(document.getElementById('newPpfdMaxVeg').value)},
+    {key:'bloom', min:parseInt(document.getElementById('newPpfdMinBloom').value), max:parseInt(document.getElementById('newPpfdMaxBloom').value)}
+  ];
+  const note=document.getElementById('newNote').value.trim(); const warn=document.getElementById('addWarning');
+  if(!name){ warn.innerText="❌ Bitte Namen eingeben."; warn.style.display='block'; return; }
+  if(isNaN(vPhMin)||isNaN(vPhMax)||isNaN(vEcMin)||isNaN(vEcMax)||isNaN(bPhMin)||isNaN(bPhMax)||isNaN(bEcMin)||isNaN(bEcMax)){
+    warn.innerText="❌ Bitte alle Zahlenfelder ausfüllen."; warn.style.display='block'; return;
+  }
+  if(vPhMin>=vPhMax||vEcMin>=vEcMax||bPhMin>=bPhMax||bEcMin>=bEcMax){
+    warn.innerText="❌ min < max beachten."; warn.style.display='block'; return;
+  }
+  // PPFD optional je Phase: beide Felder leer = Phase ueberspringen, sonst beide gueltig + min < max
+  const ppfd={};
+  for(const ph of ppfdPhases){
+    const hasMin=Number.isFinite(ph.min), hasMax=Number.isFinite(ph.max);
+    if(!hasMin&&!hasMax) continue;
+    if(hasMin!==hasMax||ph.min>=ph.max){
+      warn.innerText="❌ PPFD: pro Phase beide Felder leer lassen oder min < max."; warn.style.display='block'; return;
+    }
+    ppfd[ph.key]={min:ph.min,max:ph.max};
+  }
+  const hasPpfd=Object.keys(ppfd).length>0;
+  // Jungpflanze pH/EC optional: alle 4 leer = Phase ueberspringen, sonst alle 4 gueltig + min < max
+  const seedVals=[sPhMin,sPhMax,sEcMin,sEcMax];
+  const seedFilled=seedVals.filter(Number.isFinite).length;
+  if(seedFilled!==0&&seedFilled!==4){
+    warn.innerText="❌ Jungpflanze: alle 4 Felder ausfüllen oder leer lassen."; warn.style.display='block'; return;
+  }
+  if(seedFilled===4&&(sPhMin>=sPhMax||sEcMin>=sEcMax)){
+    warn.innerText="❌ Jungpflanze: min < max beachten."; warn.style.display='block'; return;
+  }
+  const hasSeed=seedFilled===4;
+  const seed={ph_min:sPhMin,ph_max:sPhMax,ec_min:sEcMin,ec_max:sEcMax};
+  if(editMode && editingPlantId){
+    const idx=currentPlants.findIndex(p=>p.id===editingPlantId);
+    if(idx!==-1){
+      currentPlants[idx]={id:editingPlantId,icon,name,substrate,row_spacing:rowSpacing,plant_spacing:plantSpacing,pot_size:potSize,
+        ...(hasSeed?{seed}:{}),
+        veg:{ph_min:vPhMin,ph_max:vPhMax,ec_min:vEcMin,ec_max:vEcMax},
+        bloom:{ph_min:bPhMin,ph_max:bPhMax,ec_min:bEcMin,ec_max:bEcMax},
+        ...(hasPpfd?{ppfd}:{}),note:note||"selbst hinzugefügt"};
+      sortPlants(); savePlants(); refreshSelect(); warn.innerText=`✅ "${icon} ${name}" aktualisiert!`;
+    } else warn.innerText="❌ Pflanze nicht gefunden.";
+    editMode=false; editingPlantId=null;
+    document.getElementById('addPlantBtn').textContent="🌱 PFLANZE SPEICHERN"; document.getElementById('addPlantBtn').style.background="var(--neon2)";
+    document.getElementById('formTitle').innerHTML="➕ EIGENE PFLANZE HINZUFÜGEN";
+  } else {
+    const newPlant={id:genId(name),icon,name,substrate,row_spacing:rowSpacing,plant_spacing:plantSpacing,pot_size:potSize,
+      ...(hasSeed?{seed}:{}),
+      veg:{ph_min:vPhMin,ph_max:vPhMax,ec_min:vEcMin,ec_max:vEcMax},
+      bloom:{ph_min:bPhMin,ph_max:bPhMax,ec_min:bEcMin,ec_max:bEcMax},
+      ...(hasPpfd?{ppfd}:{}),note:note||"selbst hinzugefügt"};
+    currentPlants.push(newPlant); sortPlants(); savePlants(); refreshSelect(); warn.innerText=`✅ "${icon} ${name}" (${substrate}) hinzugefügt!`;
+  }
+  document.getElementById('newName').value='';
+  document.getElementById('newRowSpacing').value=''; document.getElementById('newPlantSpacing').value=''; document.getElementById('newPotSize').value='';
+  document.getElementById('newPhMinSeed').value=''; document.getElementById('newPhMaxSeed').value='';
+  document.getElementById('newEcMinSeed').value=''; document.getElementById('newEcMaxSeed').value='';
+  document.getElementById('newPhMinVeg').value=''; document.getElementById('newPhMaxVeg').value='';
+  document.getElementById('newEcMinVeg').value=''; document.getElementById('newEcMaxVeg').value='';
+  document.getElementById('newPpfdMinSeed').value=''; document.getElementById('newPpfdMaxSeed').value='';
+  document.getElementById('newPpfdMinVeg').value=''; document.getElementById('newPpfdMaxVeg').value='';
+  document.getElementById('newPhMinBloom').value=''; document.getElementById('newPhMaxBloom').value='';
+  document.getElementById('newEcMinBloom').value=''; document.getElementById('newEcMaxBloom').value='';
+  document.getElementById('newPpfdMinBloom').value=''; document.getElementById('newPpfdMaxBloom').value='';
+  document.getElementById('newNote').value='';
+  warn.style.display='block'; setTimeout(()=>warn.style.display='none',2500);
+}
+function deleteCurrentPlant(){
+  const id=document.getElementById('plantSelect').value, plant=getFilteredPlants().find(p=>p.id===id);
+  if(!plant) return;
+  if(confirm(`Möchtest du "${plant.icon} ${plant.name}" wirklich löschen?`)){
+    currentPlants=currentPlants.filter(p=>p.id!==id); sortPlants(); savePlants(); refreshSelect();
+    const w=document.getElementById('addWarning'); w.innerText=`🗑️ "${plant.icon} ${plant.name}" gelöscht.`; w.style.display='block'; setTimeout(()=>w.style.display='none',2000);
+  }
+}
+document.getElementById('searchInput').addEventListener('input',e=>{searchTerm=e.target.value; refreshSelect();});
+document.getElementById('diseaseSearch').addEventListener('input',e=>{diseaseSearchTerm=e.target.value; refreshDiseaseSelect();});
+document.getElementById('diseaseSelect').addEventListener('change',e=>{const d=DISEASE_DB.find(d=>d.name===e.target.value); if(d) updateDiseaseDisplay(d);});
+
+// ========== DÜNGER-DOSIERUNG (Multi-Marke) ==========
+// mode 'ec'   → ml/L = faktor × Ziel-EC  (Athena dosiert auf EC)
+// mode 'fixed'→ ml/L = fester Richtwert je Komponente (EC-Feld nur informativ)
+const FERTILIZER_BRANDS = {
+  athena: {
+    name:"Athena Pro Line", mode:"ec", refVol:3.97, refPowder:900,
+    veg:[{label:"Core",factor:1.05},{label:"Grow",factor:1.60}],
+    bloom:[{label:"Core",factor:0.64},{label:"Bloom",factor:1.28}],
+    note:"⚡ Dosiert auf Ziel-EC. Faktoren geeicht auf Stammlösung 900 g / 3,97 L. Jungpflanzen niedriger starten."
+  },
+  canna_coco: {
+    name:"Canna Coco A+B", mode:"fixed",
+    veg:[{label:"Coco A",factor:4},{label:"Coco B",factor:4}],
+    bloom:[{label:"Coco A",factor:4},{label:"Coco B",factor:4}],
+    note:"Richtwert volle Dosis: 4 ml/L Coco A + 4 ml/L Coco B (= 40 ml/10 L). PK 13/14 separat in der Blüte. Herstellerschema beachten."
+  },
+  biobizz: {
+    name:"BioBizz (Erde)", mode:"fixed",
+    veg:[{label:"Bio-Grow",factor:3}],
+    bloom:[{label:"Bio-Grow",factor:1},{label:"Bio-Bloom",factor:3},{label:"Top-Max",factor:1}],
+    note:"Richtwert. Langsam einschleichen (Start 1-2 ml/L). Organisch → EC schwer messbar, EC-Feld hier informativ."
+  },
+  hesi_coco: {
+    name:"Hesi Coco", mode:"fixed",
+    veg:[{label:"Coco",factor:5}],
+    bloom:[{label:"Coco",factor:5},{label:"PK 13/14",factor:1.5}],
+    note:"Richtwert: 50 ml/10 L (= 5 ml/L). Herstellerschema beachten."
+  },
+  advanced: {
+    name:"Advanced Nutrients GMB", mode:"fixed",
+    veg:[{label:"Grow",factor:4},{label:"Micro",factor:4},{label:"Bloom",factor:4}],
+    bloom:[{label:"Grow",factor:4},{label:"Micro",factor:4},{label:"Bloom",factor:4}],
+    note:"pH-Perfect Grow-Micro-Bloom Basis: 4 ml/L je Komponente. Herstellerschema beachten."
+  }
+};
+let currentBrand = localStorage.getItem('rootguide_brand') || 'athena';
+function initBrandSelect(){
+  const sel=document.getElementById('brandSelect'); sel.innerHTML='';
+  Object.keys(FERTILIZER_BRANDS).forEach(key=>{ const o=document.createElement('option'); o.value=key; o.textContent=FERTILIZER_BRANDS[key].name; sel.appendChild(o); });
+  if(!FERTILIZER_BRANDS[currentBrand]) currentBrand='athena';
+  sel.value=currentBrand;
+  sel.addEventListener('change',()=>{ currentBrand=sel.value; try{localStorage.setItem('rootguide_brand',currentBrand);}catch(e){} updateBrandNote(); calculateDosage(); });
+}
+function updateBrandNote(){
+  const b=FERTILIZER_BRANDS[currentBrand];
+  document.getElementById('stockVolGroup').style.display = b.refVol ? '' : 'none';
+  const modeTxt=b.mode==='ec'?'Modus: EC-basiert (ml/L = Faktor × Ziel-EC)':'Modus: feste Richtwerte (ml/L unabhängig vom EC)';
+  document.getElementById('brandNote').innerHTML=`<strong>${b.name}</strong> · ${modeTxt}<br>${b.note}`;
+}
+function calculateDosage(){
+  const ec=parseFloat(document.getElementById('targetEC').value);
+  const litersRaw=document.getElementById('litersInput').value;
+  const liters=litersRaw.split(/[,;\s]+/).map(l=>parseFloat(l.trim())).filter(l=>!isNaN(l)&&l>0);
+  const resultArea=document.getElementById('resultArea');
+  const b=FERTILIZER_BRANDS[currentBrand];
+  const isBloom=currentPhase==='bloom';
+  const comps=b[isBloom?'bloom':'veg'];
+  if(liters.length===0){resultArea.innerHTML='<div class="note-area">⚠️ Bitte Liter-Werte eingeben.</div>';return;}
+  if(b.mode==='ec' && (isNaN(ec)||ec<=0)){resultArea.innerHTML='<div class="note-area">⚠️ Bitte Ziel-EC eingeben (Athena dosiert auf EC).</div>';return;}
+  // Konzentrations-Korrektur: Faktoren sind auf 900 g / 3,97 L geeicht.
+  // Abweichende Pulver-/Wassermenge → andere Konzentration → ml linear anpassen.
+  let stockCorr=1, stockVolVal=null, stockPowderVal=null;
+  if(b.refVol && b.refPowder){
+    stockVolVal=parseFloat(document.getElementById('stockVol').value);
+    stockPowderVal=parseFloat(document.getElementById('stockPowder').value);
+    if(!isNaN(stockVolVal)&&stockVolVal>0&&!isNaN(stockPowderVal)&&stockPowderVal>0)
+      stockCorr=(b.refPowder*stockVolVal)/(b.refVol*stockPowderVal);
+  }
+  const perL=comps.map(c=> (b.mode==='ec' ? c.factor*ec : c.factor) * stockCorr );
+  const mlTotalPerL=perL.reduce((a,c)=>a+c,0);
+  const stockMl=(b.refVol?(stockVolVal||b.refVol):4)*1000;
+  const maxLiter=mlTotalPerL>0?Math.floor(stockMl/mlTotalPerL):0;
+  const head='<th>Liter</th>'+comps.map(c=>`<th>${c.label} (ml)</th>`).join('')+'<th>Gesamt (ml)</th>';
+  let body='';
+  liters.forEach(L=>{
+    let row=`<td>${L} L</td>`, tot=0;
+    perL.forEach(ml=>{ const v=ml*L; tot+=v; row+=`<td>${v.toFixed(1)}</td>`; });
+    body+=`<tr>${row}<td><strong>${tot.toFixed(1)}</strong></td></tr>`;
+  });
+  const perLtext=comps.map((c,i)=>`${c.label} ${perL[i].toFixed(2)} ml`).join(' + ')+` = ${mlTotalPerL.toFixed(2)} ml/L`;
+  let html=`<div class="result-table"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+  let corrTxt='';
+  if(b.refVol && b.refPowder && Math.abs(stockCorr-1)>0.0001){
+    const pct=((stockCorr-1)*100).toFixed(1);
+    const conc=(stockPowderVal/stockVolVal).toFixed(1);
+    corrTxt=` <span style="color:var(--neon-bloom);">⚖️ Konzentrations-Korrektur: ${stockPowderVal} g in ${stockVolVal} L (${conc} g/L statt 226,7 g/L) → ${pct>0?'+':''}${pct}% angepasst.</span>`;
+  }
+  const reachTxt = b.refVol
+    ? `Deine ${stockVolVal||b.refVol} L Stammlösung reichen für max. ${maxLiter} L Gießwasser.`
+    : `Eine 4-L-Kanne reicht für max. ${maxLiter} L Gießwasser.`;
+  html+=`<div class="note-area">Pro Liter: ${perLtext}.${b.mode==='ec'?` (skaliert mit Ziel-EC ${ec})`:''} ${reachTxt}${corrTxt}</div>`;
+  resultArea.innerHTML=html;
+}
+function setLiters(v){document.getElementById('litersInput').value=v; calculateDosage();}
+
+// ========== GROW-TAGEBUCH ==========
+let diaryEntries=[], diarySearch='';
+function loadDiary(){ try{ const s=JSON.parse(localStorage.getItem('rootguide_diary')); diaryEntries=Array.isArray(s)?s:[]; }catch(e){ diaryEntries=[]; } }
+function saveDiary(){ try{ localStorage.setItem('rootguide_diary', JSON.stringify(diaryEntries)); return true; }catch(e){ return false; } }
+function downscaleImage(file, cb){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=400; let w=img.width, h=img.height;
+      if(w>h && w>max){ h=Math.round(h*max/w); w=max; } else if(h>max){ w=Math.round(w*max/h); h=max; }
+      const c=document.createElement('canvas'); c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',0.6));
+    };
+    img.onerror=()=>cb(null);
+    img.src=e.target.result;
+  };
+  reader.onerror=()=>cb(null);
+  reader.readAsDataURL(file);
+}
+// --- Foto-Quellen: Datei / Live-Kamera / IP-Cam ---
+let pendingPhoto=null, camStream=null;
+function setPendingPhoto(dataUrl){
+  pendingPhoto=dataUrl||null;
+  const wrap=document.getElementById('photoPreviewWrap');
+  if(pendingPhoto){ document.getElementById('photoPreview').src=pendingPhoto; wrap.style.display='block'; }
+  else { wrap.style.display='none'; document.getElementById('photoPreview').removeAttribute('src'); }
+}
+function showPhotoPane(which){
+  document.getElementById('photoPaneFile').style.display = which==='file'?'':'none';
+  document.getElementById('photoPaneCam').style.display  = which==='cam' ?'':'none';
+  document.getElementById('photoPaneIp').style.display   = which==='ip'  ?'':'none';
+  const map={file:'photoSrcFile',cam:'photoSrcCam',ip:'photoSrcIp'};
+  ['photoSrcFile','photoSrcCam','photoSrcIp'].forEach(id=>document.getElementById(id).className='phase-btn');
+  document.getElementById(map[which]).className='phase-btn active-veg';
+  if(which==='cam') listCameras(); else stopCam();
+}
+async function listCameras(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.enumerateDevices) return;
+  try{
+    const devs=await navigator.mediaDevices.enumerateDevices();
+    const cams=devs.filter(d=>d.kind==='videoinput');
+    const sel=document.getElementById('camDevice'); const prev=sel.value; sel.innerHTML='';
+    if(!cams.length){ const o=document.createElement('option'); o.textContent='Keine Kamera erkannt'; sel.appendChild(o); return; }
+    cams.forEach((c,i)=>{ const o=document.createElement('option'); o.value=c.deviceId; o.textContent=c.label||('Kamera '+(i+1)); sel.appendChild(o); });
+    if(prev) sel.value=prev;
+  }catch(e){}
+}
+async function startCam(){
+  stopCam();
+  const w=document.getElementById('logWarning');
+  if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    w.innerText='❌ Kamera braucht HTTPS. Am Handy die Seite über https://www.gz-ai-stacks.de öffnen – nicht über eine http-/lokale Netzwerk-Adresse.';
+    w.style.display='block'; return;
+  }
+  const v=document.getElementById('camPreview');
+  try{
+    const devId=document.getElementById('camDevice').value;
+    const video = devId ? {deviceId:{exact:devId}} : {facingMode:{ideal:'environment'}}; // Standard: Rückkamera (mobil)
+    camStream=await navigator.mediaDevices.getUserMedia({ video, audio:false });
+    v.srcObject=camStream; try{ await v.play(); }catch(e){}
+    listCameras();
+  }catch(e){
+    let msg;
+    if(e.name==='NotAllowedError'||e.name==='SecurityError') msg='❌ Zugriff verweigert. Kamera-Berechtigung erlauben (Adresszeile: Schloss-Symbol → Berechtigungen).';
+    else if(e.name==='NotFoundError'||e.name==='DevicesNotFoundError') msg='❌ Keine Kamera gefunden.';
+    else if(e.name==='NotReadableError'||e.name==='TrackStartError') msg='❌ Kamera wird gerade von einer anderen App benutzt.';
+    else if(e.name==='OverconstrainedError'){
+      try{ camStream=await navigator.mediaDevices.getUserMedia({video:true,audio:false}); v.srcObject=camStream; try{await v.play();}catch(_){} listCameras(); return; }
+      catch(e2){ msg='❌ Gewählte Kamera nicht verfügbar.'; }
+    } else msg='❌ Kamera-Zugriff fehlgeschlagen ('+e.name+').';
+    w.innerText=msg; w.style.display='block';
+  }
+}
+function stopCam(){
+  if(camStream){ camStream.getTracks().forEach(t=>t.stop()); camStream=null; }
+  const v=document.getElementById('camPreview'); if(v) v.srcObject=null;
+}
+function captureLiveFrameDataUrl(){
+  const v=document.getElementById('camPreview');
+  if(!v||!v.videoWidth) return null;
+  let cw=v.videoWidth, ch=v.videoHeight; const max=400;
+  if(cw>ch&&cw>max){ ch=Math.round(ch*max/cw); cw=max; } else if(ch>max){ cw=Math.round(cw*max/ch); ch=max; }
+  const c=document.createElement('canvas'); c.width=cw; c.height=ch;
+  c.getContext('2d').drawImage(v,0,0,cw,ch);
+  return c.toDataURL('image/jpeg',0.6);
+}
+function captureIpFrameDataUrl(url){
+  return new Promise(resolve=>{
+    fetch(url,{cache:'no-store'}).then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.blob(); })
+      .then(blob=>downscaleImage(blob, resolve)).catch(()=>resolve(null));
+  });
+}
+function snapCam(){
+  const w=document.getElementById('logWarning');
+  const url=captureLiveFrameDataUrl();
+  if(!url){ w.innerText='❌ Erst „Kamera starten".'; w.style.display='block'; return; }
+  setPendingPhoto(url);
+  w.innerText='📸 Foto übernommen.'; w.style.display='block'; setTimeout(()=>w.style.display='none',1500);
+}
+async function grabIpCam(){
+  const url=document.getElementById('ipCamUrl').value.trim(), w=document.getElementById('logWarning');
+  if(!url){ w.innerText='❌ Bitte Kamera-URL eingeben.'; w.style.display='block'; return; }
+  try{
+    const res=await fetch(url,{cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const blob=await res.blob();
+    downscaleImage(blob, dataUrl=>{
+      if(dataUrl){ setPendingPhoto(dataUrl); w.innerText='🌐 Bild von Kamera geholt.'; }
+      else { w.innerText='❌ Bild konnte nicht verarbeitet werden.'; }
+      w.style.display='block'; setTimeout(()=>w.style.display='none',1500);
+    });
+  }catch(e){ w.innerText='❌ Kamera nicht erreichbar / blockiert (CORS oder http auf https-Seite).'; w.style.display='block'; }
+}
+function addDiaryEntry(){
+  const date=document.getElementById('logDate').value || new Date().toISOString().slice(0,10);
+  const plant=document.getElementById('logPlant').value.trim();
+  const phase=document.getElementById('logPhase').value;
+  const water=document.getElementById('logWater').value;
+  const ph=document.getElementById('logPh').value;
+  const ec=document.getElementById('logEc').value;
+  const note=document.getElementById('logNote').value.trim();
+  const w=document.getElementById('logWarning');
+  if(!plant){ w.innerText='❌ Bitte Pflanze angeben.'; w.style.display='block'; return; }
+  diaryEntries.unshift({ id:Date.now()+'_'+Math.floor(Math.random()*1000), date, plant, phase, water, ph, ec, note, photo:pendingPhoto||null });
+  const ok=saveDiary();
+  if(!ok){ diaryEntries.shift(); w.innerText='⚠️ Speicher voll – Eintrag ohne Foto erneut speichern.'; w.style.display='block'; return; }
+  renderDiary();
+  document.getElementById('logPlant').value=''; document.getElementById('logWater').value='';
+  document.getElementById('logPh').value=''; document.getElementById('logEc').value='';
+  document.getElementById('logNote').value=''; document.getElementById('logPhoto').value='';
+  setPendingPhoto(null); stopCam();
+  w.innerText='✅ Eintrag gespeichert.'; w.style.display='block'; setTimeout(()=>w.style.display='none',2000);
+}
+function deleteDiaryEntry(id){
+  if(!confirm('Eintrag wirklich löschen?')) return;
+  diaryEntries=diaryEntries.filter(e=>e.id!==id); saveDiary(); renderDiary();
+}
+function renderDiary(){
+  const list=document.getElementById('logList');
+  const t=diarySearch.toLowerCase();
+  const entries=diarySearch? diaryEntries.filter(e=>(e.plant+' '+(e.note||'')).toLowerCase().includes(t)) : diaryEntries;
+  if(!entries.length){ list.innerHTML='<div class="note-area">📔 Noch keine Einträge'+(diarySearch?' gefunden':'. Trag deinen ersten Gießgang ein!')+'</div>'; return; }
+  list.innerHTML=entries.map(e=>{
+    const vals=[]; if(e.water)vals.push('💧 '+e.water+' L'); if(e.ph)vals.push('pH '+e.ph); if(e.ec)vals.push('EC '+e.ec);
+    return `<div class="note-area" style="margin-top:10px;display:flex;gap:12px;align-items:flex-start;">
+      ${e.photo?`<img src="${e.photo}" alt="Foto" style="width:64px;height:64px;object-fit:cover;border:1px solid var(--border2);flex-shrink:0;">`:''}
+      <div style="flex:1;min-width:0;">
+        <strong>${e.date} · ${e.plant}</strong> <span style="color:var(--text-dim);">[${e.phase}]</span><br>
+        ${vals.length?vals.join(' · ')+'<br>':''}${e.note?'📝 '+e.note:''}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+        <button class="action-btn" title="Teilen (WhatsApp etc.)" onclick="shareDiaryEntry('${e.id}')">📤</button>
+        <button class="action-btn delete-btn" title="Löschen" onclick="deleteDiaryEntry('${e.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ========== TEILEN / EXPORT (WhatsApp & Co. via Web Share API) ==========
+function dataUrlToFile(dataUrl, filename){
+  const arr=dataUrl.split(','); const mime=(arr[0].match(/:(.*?);/)||[])[1]||'image/jpeg';
+  const bstr=atob(arr[1]); let n=bstr.length; const u8=new Uint8Array(n);
+  while(n--) u8[n]=bstr.charCodeAt(n);
+  return new File([u8], filename, {type:mime});
+}
+async function shareOrDownload(dataUrl, filename, text){
+  try{
+    if(dataUrl && navigator.canShare){
+      const file=dataUrlToFile(dataUrl, filename);
+      if(navigator.canShare({files:[file]})){ await navigator.share({files:[file], text:text||''}); return; }
+    }
+    if(!dataUrl && navigator.share){ await navigator.share({text:text||''}); return; }
+  }catch(e){ if(e.name==='AbortError') return; }
+  // Fallback (Desktop / kein Teilen): Bild herunterladen bzw. Text kopieren
+  if(dataUrl){ const a=document.createElement('a'); a.href=dataUrl; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); }
+  else { try{ await navigator.clipboard.writeText(text||''); alert('Text in die Zwischenablage kopiert.'); }catch(_){ alert(text||''); } }
+}
+function shareDiaryEntry(id){
+  const e=diaryEntries.find(x=>x.id===id); if(!e) return;
+  const vals=[]; if(e.water)vals.push('💧 '+e.water+' L'); if(e.ph)vals.push('pH '+e.ph); if(e.ec)vals.push('EC '+e.ec);
+  const text=`🌱 ${e.plant} (${e.phase}) – ${e.date}\n${vals.join(' · ')}${e.note?'\n📝 '+e.note:''}\n\n(via RootGuide)`;
+  shareOrDownload(e.photo||null, `rootguide_${e.date}_${(e.plant||'').replace(/[^a-z0-9]/gi,'')}.jpg`, text);
+}
+function tlShareCurrent(){
+  const player=document.getElementById('tlPlayer');
+  let src=player.src && player.src.startsWith('data:') ? player.src : null;
+  if(!src && tlFrames.length) src=tlFrames[tlFrames.length-1].dataUrl;
+  if(!src){ const w=document.getElementById('tlWarning'); w.innerText='❌ Noch kein Bild zum Teilen. Erst „Abspielen" oder aufnehmen.'; w.style.display='block'; return; }
+  shareOrDownload(src, 'rootguide_timelapse.jpg', '🌱 Mein RootGuide-Timelapse');
+}
+
+// ========== TIMELAPSE / INTERVALL-AUFNAHME ==========
+let tlDB=null, tlTimer=null, tlTick=null, tlCount=0, tlTarget=0, tlIntervalMs=0, tlNextAt=0, tlWakeLock=null;
+let tlFrames=[], tlPlayTimer=null, tlPlayIdx=0;
+
+function tlOpenDB(){
+  return new Promise((resolve)=>{
+    try{
+      const req=indexedDB.open('rootguide_timelapse',1);
+      req.onupgradeneeded=e=>{ const db=e.target.result; if(!db.objectStoreNames.contains('frames')) db.createObjectStore('frames',{keyPath:'id'}); };
+      req.onsuccess=e=>{ tlDB=e.target.result; resolve(tlDB); };
+      req.onerror=()=>resolve(null);
+    }catch(e){ resolve(null); }
+  });
+}
+function tlAdd(frame){ return new Promise((res)=>{ if(!tlDB) return res(false); const tx=tlDB.transaction('frames','readwrite'); tx.objectStore('frames').put(frame); tx.oncomplete=()=>res(true); tx.onerror=()=>res(false); }); }
+function tlGetAll(){ return new Promise((res)=>{ if(!tlDB) return res([]); const tx=tlDB.transaction('frames','readonly'); const r=tx.objectStore('frames').getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=()=>res([]); }); }
+function tlClearDB(){ return new Promise((res)=>{ if(!tlDB) return res(); const tx=tlDB.transaction('frames','readwrite'); tx.objectStore('frames').clear(); tx.oncomplete=()=>res(); }); }
+function tlDeleteOne(id){ return new Promise((res)=>{ if(!tlDB) return res(); const tx=tlDB.transaction('frames','readwrite'); tx.objectStore('frames').delete(id); tx.oncomplete=()=>res(); }); }
+
+function tlFmtDur(sec){ const h=Math.floor(sec/3600), m=Math.round((sec%3600)/60); return (h?h+' Std ':'')+((m||!h)?m+' Min':'').trim(); }
+function tlUpdateEstimate(){
+  const iv=parseFloat(document.getElementById('tlInterval').value)||0;
+  const unit=document.getElementById('tlIntervalUnit').value;
+  const cnt=parseInt(document.getElementById('tlCount').value)||0;
+  const sec=iv*(unit==='min'?60:1);
+  const uLbl=unit==='min'?'Min':'Sek';
+  const el=document.getElementById('tlEstimate');
+  if(!iv){ el.textContent='⚠️ Intervall eingeben.'; return; }
+  if(cnt>0){ el.textContent=`${cnt} Bilder, alle ${iv} ${uLbl} → Aufnahme läuft ca. ${tlFmtDur(sec*(cnt-1))}.`; }
+  else { el.textContent=`Alle ${iv} ${uLbl} ein Bild – läuft bis du auf Stop drückst.`; }
+}
+function tlUpdateStatus(){
+  const el=document.getElementById('tlStatus'); el.style.display='block';
+  const remain=Math.max(0,Math.round((tlNextAt-Date.now())/1000));
+  el.textContent=`📸 ${tlCount}${tlTarget?' / '+tlTarget:''} Bilder aufgenommen · nächstes in ${remain}s`;
+}
+
+async function tlCapture(source){
+  let dataUrl=null;
+  if(source==='live') dataUrl=captureLiveFrameDataUrl();
+  else if(source==='ip') dataUrl=await captureIpFrameDataUrl(document.getElementById('tlIpUrl').value.trim());
+  tlNextAt=Date.now()+tlIntervalMs;
+  if(!dataUrl) return; // Frame verpasst (Kamera/IP grad weg) -> kein Abbruch
+  await tlAdd({ id:Date.now()+'_'+Math.floor(Math.random()*1000), ts:new Date().toISOString(), dataUrl });
+  tlCount++;
+  renderTlGallery();
+  if(tlTarget>0 && tlCount>=tlTarget) tlStop(true);
+}
+async function tlStart(){
+  const source=document.getElementById('tlSource').value;
+  const iv=parseFloat(document.getElementById('tlInterval').value);
+  const unit=document.getElementById('tlIntervalUnit').value;
+  const w=document.getElementById('tlWarning');
+  if(isNaN(iv)||iv<=0){ w.innerText='❌ Bitte ein Intervall eingeben.'; w.style.display='block'; return; }
+  tlIntervalMs=iv*(unit==='min'?60000:1000);
+  tlTarget=parseInt(document.getElementById('tlCount').value)||0;
+  if(source==='live'){ if(!camStream) await startCam(); if(!camStream){ w.innerText='❌ Live-Kamera nicht aktiv – im Tagebuch erst „Kamera starten".'; w.style.display='block'; return; } }
+  if(source==='ip' && !document.getElementById('tlIpUrl').value.trim()){ w.innerText='❌ Bitte IP-Cam-URL eingeben.'; w.style.display='block'; return; }
+  tlCount=0; w.style.display='none';
+  try{ if('wakeLock' in navigator) tlWakeLock=await navigator.wakeLock.request('screen'); }catch(e){}
+  document.getElementById('tlStartBtn').disabled=true;
+  document.getElementById('tlStopBtn').disabled=false;
+  tlNextAt=Date.now()+tlIntervalMs;
+  await tlCapture(source);
+  tlTimer=setInterval(()=>tlCapture(source), tlIntervalMs);
+  tlTick=setInterval(tlUpdateStatus, 1000);
+  tlUpdateStatus();
+}
+function tlStop(done){
+  if(tlTimer){ clearInterval(tlTimer); tlTimer=null; }
+  if(tlTick){ clearInterval(tlTick); tlTick=null; }
+  if(tlWakeLock){ try{ tlWakeLock.release(); }catch(e){} tlWakeLock=null; }
+  document.getElementById('tlStartBtn').disabled=false;
+  document.getElementById('tlStopBtn').disabled=true;
+  document.getElementById('tlStatus').style.display='none';
+  const w=document.getElementById('tlWarning'); w.innerText=done?`✅ Timelapse fertig: ${tlCount} Bilder.`:`⏹ Gestoppt bei ${tlCount} Bildern.`; w.style.display='block';
+}
+async function renderTlGallery(){
+  const frames=await tlGetAll();
+  frames.sort((a,b)=>a.ts.localeCompare(b.ts));
+  tlFrames=frames;
+  document.getElementById('tlGalleryCount').textContent=frames.length;
+  const grid=document.getElementById('tlGallery');
+  if(!frames.length){ grid.innerHTML='<div class="note-area" style="width:100%;">Noch keine Timelapse-Bilder.</div>'; return; }
+  grid.innerHTML=frames.map(f=>`<img src="${f.dataUrl}" title="${f.ts} – Klick: ins Tagebuch" data-id="${f.id}" style="width:60px;height:60px;object-fit:cover;border:1px solid var(--border2);cursor:pointer;">`).join('');
+}
+function tlPlay(){
+  if(!tlFrames.length) return;
+  tlStopPlay();
+  const fps=parseFloat(document.getElementById('tlSpeed').value)||4;
+  const player=document.getElementById('tlPlayer'); player.style.display='block';
+  tlPlayIdx=0;
+  const show=()=>{
+    const f=tlFrames[tlPlayIdx];
+    player.src=f.dataUrl;
+    document.getElementById('tlPlayInfo').textContent=`Bild ${tlPlayIdx+1}/${tlFrames.length} · ${f.ts.replace('T',' ').slice(0,19)}`;
+    tlPlayIdx=(tlPlayIdx+1)%tlFrames.length;
+  };
+  show();
+  tlPlayTimer=setInterval(show, 1000/fps);
+}
+function tlStopPlay(){ if(tlPlayTimer){ clearInterval(tlPlayTimer); tlPlayTimer=null; } }
+async function tlClearAll(){
+  if(!tlFrames.length){ return; }
+  if(!confirm(`Alle ${tlFrames.length} Timelapse-Bilder löschen?`)) return;
+  tlStopPlay(); document.getElementById('tlPlayer').style.display='none'; document.getElementById('tlPlayInfo').textContent='';
+  await tlClearDB(); await renderTlGallery();
+}
+function tlFrameToDiary(id){
+  const f=tlFrames.find(x=>x.id===id); if(!f) return;
+  if(!confirm('Dieses Bild als Tagebuch-Eintrag übernehmen?')) return;
+  diaryEntries.unshift({ id:Date.now()+'_'+Math.floor(Math.random()*1000), date:f.ts.slice(0,10), plant:'Timelapse', phase:'-', water:'', ph:'', ec:'', note:'Timelapse-Bild '+f.ts.replace('T',' ').slice(0,19), photo:f.dataUrl });
+  if(saveDiary()){ renderDiary(); const w=document.getElementById('tlWarning'); w.innerText='✅ Bild ins Tagebuch übernommen.'; w.style.display='block'; setTimeout(()=>w.style.display='none',1800); }
+}
+
+// ========== EXPORT mit ORDNERAUSWAHL (File System Access API) ==========
+async function exportWithPicker() {
+  const dataStr = JSON.stringify(currentPlants, null, 2);
+  const blob = new Blob([dataStr], { type: 'application/json' });
+  if ('showSaveFilePicker' in window) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: `rootguide_plants_${Date.now()}.json`,
+        types: [{ description: 'JSON-Datei', accept: { 'application/json': ['.json'] } }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(blob);
+      await writable.close();
+      const warn = document.getElementById('importExportWarning');
+      warn.innerText = "✅ Export erfolgreich! Datei gespeichert.";
+      warn.style.display = 'block';
+      setTimeout(() => warn.style.display = 'none', 2000);
+    } catch (err) {
+      if (err.name !== 'AbortError') fallbackExport(blob);
+    }
+  } else {
+    fallbackExport(blob);
+  }
+}
+function fallbackExport(blob) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `rootguide_plants_${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  const warn = document.getElementById('importExportWarning');
+  warn.innerText = "💾 Export in den Download-Ordner (Ordnerauswahl nicht unterstützt).";
+  warn.style.display = 'block';
+  setTimeout(() => warn.style.display = 'none', 2000);
+}
+function importFromFile(file){
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const imported=JSON.parse(e.target.result);
+      if(!Array.isArray(imported)) throw new Error();
+      for(let p of imported) if(!p.name||!p.substrate||!p.veg||!p.bloom) throw new Error();
+      currentPlants=imported.map(p=>normalizeLight({...p,id:genId(p.name)}));
+      sortPlants(); savePlants(); refreshSelect();
+      const w=document.getElementById('importExportWarning'); if(w){w.innerText="✅ Import erfolgreich!"; w.style.display='block'; setTimeout(()=>w.style.display='none',2000);}
+    } catch(err){ alert("Fehler beim Import: Ungültige Datei"); }
+  };
+  r.readAsText(file);
+}
+document.getElementById('calcBtn').addEventListener('click',calculateDosage);
+document.getElementById('addPlantBtn').addEventListener('click',savePlant);
+document.getElementById('editBtn').addEventListener('click',editCurrentPlant);
+document.getElementById('deleteBtn').addEventListener('click',deleteCurrentPlant);
+document.getElementById('exportBtn').addEventListener('click',exportWithPicker);
+document.getElementById('importBtnTrigger').addEventListener('click',()=>document.getElementById('importFileInput').click());
+document.getElementById('importFileInput').addEventListener('change',e=>{if(e.target.files[0]) importFromFile(e.target.files[0]); e.target.value='';});
+document.getElementById('targetEC').addEventListener('input',calculateDosage);
+document.getElementById('litersInput').addEventListener('input',calculateDosage);
+document.getElementById('stockVol').addEventListener('input',calculateDosage);
+document.getElementById('stockPowder').addEventListener('input',calculateDosage);
+document.getElementById('btnSeed').addEventListener('click',()=>setPhase('seed'));
+document.getElementById('btnVeg').addEventListener('click',()=>setPhase('veg'));
+document.getElementById('btnBloom').addEventListener('click',()=>setPhase('bloom'));
+document.getElementById('plantSelect').addEventListener('change',()=>{updateDisplay();calculateDosage();});
+document.getElementById('resetPlantsBtn').addEventListener('click',resetPlants);
+document.getElementById('addLogBtn').addEventListener('click',addDiaryEntry);
+document.getElementById('logSearch').addEventListener('input',e=>{diarySearch=e.target.value; renderDiary();});
+document.getElementById('photoSrcFile').addEventListener('click',()=>showPhotoPane('file'));
+document.getElementById('photoSrcCam').addEventListener('click',()=>showPhotoPane('cam'));
+document.getElementById('photoSrcIp').addEventListener('click',()=>showPhotoPane('ip'));
+document.getElementById('logPhoto').addEventListener('change',e=>{ if(e.target.files[0]) downscaleImage(e.target.files[0], setPendingPhoto); });
+document.getElementById('camStartBtn').addEventListener('click',startCam);
+document.getElementById('camSnapBtn').addEventListener('click',snapCam);
+document.getElementById('camStopBtn').addEventListener('click',stopCam);
+document.getElementById('camDevice').addEventListener('change',()=>{ if(camStream) startCam(); });
+document.getElementById('ipGrabBtn').addEventListener('click',grabIpCam);
+document.getElementById('photoClearBtn').addEventListener('click',()=>setPendingPhoto(null));
+// Timelapse
+document.getElementById('tlSource').addEventListener('change',e=>{ document.getElementById('tlIpRow').style.display = e.target.value==='ip'?'':'none'; });
+['tlInterval','tlIntervalUnit','tlCount'].forEach(id=>document.getElementById(id).addEventListener('input',tlUpdateEstimate));
+document.getElementById('tlIntervalUnit').addEventListener('change',tlUpdateEstimate);
+document.getElementById('tlStartBtn').addEventListener('click',tlStart);
+document.getElementById('tlStopBtn').addEventListener('click',()=>tlStop(false));
+document.getElementById('tlPlayBtn').addEventListener('click',tlPlay);
+document.getElementById('tlPauseBtn').addEventListener('click',tlStopPlay);
+document.getElementById('tlClearBtn').addEventListener('click',tlClearAll);
+document.getElementById('tlShareBtn').addEventListener('click',tlShareCurrent);
+document.getElementById('tlGallery').addEventListener('click',e=>{ const id=e.target&&e.target.getAttribute('data-id'); if(id) tlFrameToDiary(id); });
+document.addEventListener('visibilitychange',async()=>{ if(document.visibilityState==='visible' && tlTimer && !tlWakeLock){ try{ if('wakeLock' in navigator) tlWakeLock=await navigator.wakeLock.request('screen'); }catch(e){} } });
+
+// ===== INIT =====
+applyTheme(localStorage.getItem('rootguide_theme')||'dark');
+initIconSelect();
+initBrandSelect(); updateBrandNote();
+const savedPlants=loadPlants();
+if(savedPlants){
+  // eigene Liste laden + neue Default-Pflanzen still dazu mergen (keine Duplikate)
+  const merged=savedPlants.map(p=>({...p,id:p.id||genId(p.name)}));
+  const savedNames=new Set(merged.map(p=>p.name.toLowerCase()));
+  const newDefaults=DEFAULT_PLANTS.filter(p=>!savedNames.has(p.name.toLowerCase()));
+  newDefaults.forEach(p=>merged.push({...p,id:genId(p.name)}));
+  currentPlants=merged;
+  if(newDefaults.length) savePlants(); // gecachte Liste aktualisieren
+} else {
+  currentPlants=DEFAULT_PLANTS.map(p=>({...p,id:genId(p.name)}));
+}
+currentPlants.forEach(normalizeLight);
+sortPlants(); refreshSelect(); setPhase('veg'); refreshDiseaseSelect();
+document.getElementById('logDate').value=new Date().toISOString().slice(0,10);
+loadDiary(); renderDiary();
+tlUpdateEstimate(); tlOpenDB().then(renderTlGallery);
+
+// ========== APP-WALKTHROUGH ==========
+const TOUR_STEPS = [
+  {
+    selector: '.info-bar',
+    title: '📊 STATUS-LEISTE',
+    text: 'Hier siehst du auf einen Blick, wie viele Pflanzen du erfasst hast, in welcher Phase die aktuell ausgewählte Pflanze steht und welcher EC-Wert empfohlen wird.'
+  },
+  {
+    selector: '#diseaseSelect',
+    title: '🌿 KRANKHEITS-BIBLIOTHEK',
+    text: 'Suche eine Krankheit oder einen Schädling — RootGuide zeigt dir Symptome, Ursachen, Behandlung und Vorbeugung. Schnell durchsuchbar.',
+    scrollTarget: '#diseaseSearch'
+  },
+  {
+    selector: '#plantSelect',
+    title: '🌱 PFLANZE & PHASE',
+    text: 'Wähle eine Pflanze aus und schalte zwischen Jungpflanze, Vegetativ und Blüte/Frucht um. pH, EC und PPFD werden automatisch passend dazu angezeigt.'
+  },
+  {
+    selector: '#newName',
+    title: '➕ EIGENE PFLANZE ANLEGEN',
+    text: 'Trag deine eigenen Sorten ein — inklusive Pflanzabstand (Reihe & Pflanze), Topfgröße, pH/EC pro Phase und Lichtbedarf. Alles wird lokal gespeichert.',
+    scrollTarget: '#newName'
+  },
+  {
+    selector: '#calcBtn',
+    title: '🧪 DÜNGER-RECHNER',
+    text: 'Ziel-EC und Wassermenge eintragen, Dünger-Marke wählen — RootGuide rechnet dir die genaue Dosierung pro Liter aus. Funktioniert mit Pulver- und Lösungs-Düngern.',
+    scrollTarget: '#brandSelect'
+  },
+  {
+    selector: '#addLogBtn',
+    title: '📔 GROW-TAGEBUCH',
+    text: 'Jede Gabe, jede Messung, jedes Foto landet hier. Lade Bilder hoch, mach Aufnahmen mit der Live-Kamera oder hol Snapshots von einer IP-Cam. Alles lokal, keine Cloud.',
+    scrollTarget: '#logDate'
+  },
+  {
+    selector: '#tlStartBtn',
+    title: '⏱ TIMELAPSE',
+    text: 'Intervall einstellen, Start drücken — RootGuide nimmt automatisch Bilder auf und legt sie in der lokalen Galerie ab. Perfekt für Wachstums-Dokumentation.',
+    scrollTarget: '#tlSource'
+  },
+  {
+    selector: '#exportBtn',
+    title: '📁 EXPORT & IMPORT',
+    text: 'Deine ganze Pflanzen-Datenbank lässt sich als JSON exportieren und auf anderen Geräten wieder importieren. Backup ist deine Sache — nichts liegt in der Cloud.',
+    scrollTarget: '#exportBtn'
+  }
+];
+
+let tourIndex = 0;
+let tourActive = false;
+
+function createTourElements() {
+  if (document.getElementById('tourOverlay')) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'tourOverlay';
+  overlay.setAttribute('role', 'dialog');
+  overlay.setAttribute('aria-modal', 'true');
+  overlay.setAttribute('aria-label', 'RootGuide App-Tour');
+  overlay.innerHTML = `
+    <div class="tour-dim" id="tourDimTop"></div>
+    <div class="tour-dim" id="tourDimBottom"></div>
+    <div class="tour-dim" id="tourDimLeft"></div>
+    <div class="tour-dim" id="tourDimRight"></div>
+    <div class="tour-highlight" id="tourHighlight"></div>
+    <div class="tour-tooltip" id="tourTooltip">
+      <div class="tour-progress" id="tourProgress" aria-hidden="true"></div>
+      <div class="tour-step" id="tourStepLabel">SCHRITT 1 / ${TOUR_STEPS.length}</div>
+      <h4 id="tourTitle">Titel</h4>
+      <p id="tourText">Text</p>
+      <div class="tour-actions">
+        <div class="left">
+          <button class="tour-btn skip" onclick="endTour()">Überspringen</button>
+        </div>
+        <div class="right">
+          <button class="tour-btn" id="tourPrev" onclick="tourPrev()">Zurück</button>
+          <button class="tour-btn primary" id="tourNext" onclick="tourNext()">Weiter ▶</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  // Klick auf einen Dim-Bereich beendet die Tour
+  ['tourDimTop','tourDimBottom','tourDimLeft','tourDimRight'].forEach(id => {
+    document.getElementById(id).addEventListener('click', endTour);
+  });
+}
+
+function startTour() {
+  createTourElements();
+  tourIndex = 0;
+  tourActive = true;
+  document.getElementById('tourOverlay').classList.add('visible');
+  document.addEventListener('keydown', tourKeyHandler);
+  showTourStep(tourIndex);
+}
+
+function endTour() {
+  const overlay = document.getElementById('tourOverlay');
+  if (overlay) overlay.classList.remove('visible');
+  tourActive = false;
+  document.removeEventListener('keydown', tourKeyHandler);
+  try { localStorage.setItem('rootguide_tour_seen', '1'); } catch(e){}
+}
+
+function tourKeyHandler(e) {
+  if (!tourActive) return;
+  if (e.key === 'Escape') { endTour(); e.preventDefault(); }
+  else if (e.key === 'ArrowRight' || e.key === 'Enter') { tourNext(); e.preventDefault(); }
+  else if (e.key === 'ArrowLeft') { tourPrev(); e.preventDefault(); }
+}
+
+function tourNext() {
+  if (tourIndex < TOUR_STEPS.length - 1) {
+    tourIndex++;
+    showTourStep(tourIndex);
+  } else {
+    endTour();
+  }
+}
+
+function tourPrev() {
+  if (tourIndex > 0) {
+    tourIndex--;
+    showTourStep(tourIndex);
+  }
+}
+
+function showTourStep(idx) {
+  const step = TOUR_STEPS[idx];
+  if (!step) return;
+  const target = document.querySelector(step.scrollTarget || step.selector) || document.querySelector(step.selector);
+  if (!target) { tourNext(); return; }
+
+  // scroll target into view, then position highlight + tooltip
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  setTimeout(() => {
+    const el = document.querySelector(step.selector);
+    if (!el) { tourNext(); return; }
+    const rect = el.getBoundingClientRect();
+    const padding = 8;
+    const hlTop = Math.max(0, rect.top - padding);
+    const hlLeft = Math.max(0, rect.left - padding);
+    const hlWidth = rect.width + padding * 2;
+    const hlHeight = rect.height + padding * 2;
+    const vw = window.innerWidth, vh = window.innerHeight;
+
+    const hl = document.getElementById('tourHighlight');
+    hl.style.top = hlTop + 'px';
+    hl.style.left = hlLeft + 'px';
+    hl.style.width = hlWidth + 'px';
+    hl.style.height = hlHeight + 'px';
+
+    // 4 Dim-Panels rund um das Highlight - App-Inhalt im Highlight bleibt scharf sichtbar
+    const dimTop = document.getElementById('tourDimTop');
+    dimTop.style.top = '0px';
+    dimTop.style.left = '0px';
+    dimTop.style.width = vw + 'px';
+    dimTop.style.height = hlTop + 'px';
+
+    const dimBottom = document.getElementById('tourDimBottom');
+    dimBottom.style.top = (hlTop + hlHeight) + 'px';
+    dimBottom.style.left = '0px';
+    dimBottom.style.width = vw + 'px';
+    dimBottom.style.height = Math.max(0, vh - (hlTop + hlHeight)) + 'px';
+
+    const dimLeft = document.getElementById('tourDimLeft');
+    dimLeft.style.top = hlTop + 'px';
+    dimLeft.style.left = '0px';
+    dimLeft.style.width = hlLeft + 'px';
+    dimLeft.style.height = hlHeight + 'px';
+
+    const dimRight = document.getElementById('tourDimRight');
+    dimRight.style.top = hlTop + 'px';
+    dimRight.style.left = (hlLeft + hlWidth) + 'px';
+    dimRight.style.width = Math.max(0, vw - (hlLeft + hlWidth)) + 'px';
+    dimRight.style.height = hlHeight + 'px';
+
+    // tooltip placement
+    const tooltip = document.getElementById('tourTooltip');
+    const tipRect = tooltip.getBoundingClientRect();
+    let top, left;
+    // place below if space, otherwise above
+    if (rect.bottom + tipRect.height + 20 < vh) {
+      top = rect.bottom + 14;
+    } else if (rect.top - tipRect.height - 20 > 0) {
+      top = rect.top - tipRect.height - 14;
+    } else {
+      top = Math.max(20, (vh - tipRect.height) / 2);
+    }
+    left = rect.left + rect.width / 2 - tipRect.width / 2;
+    left = Math.max(16, Math.min(left, vw - tipRect.width - 16));
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+
+    // fill content
+    document.getElementById('tourStepLabel').textContent = `SCHRITT ${idx + 1} / ${TOUR_STEPS.length}`;
+    document.getElementById('tourTitle').textContent = step.title;
+    document.getElementById('tourText').textContent = step.text;
+    document.getElementById('tourPrev').style.visibility = idx === 0 ? 'hidden' : 'visible';
+    document.getElementById('tourNext').textContent = (idx === TOUR_STEPS.length - 1) ? '✓ Fertig' : 'Weiter ▶';
+
+    // progress bar
+    const prog = document.getElementById('tourProgress');
+    prog.innerHTML = '';
+    for (let i = 0; i < TOUR_STEPS.length; i++) {
+      const dot = document.createElement('span');
+      if (i < idx) dot.className = 'done';
+      else if (i === idx) dot.className = 'current';
+      prog.appendChild(dot);
+    }
+  }, 350);
+}
+
+// Auto-Tour beim ersten Start (nach Boot, nur einmal)
+setTimeout(() => {
+  try {
+    if (!localStorage.getItem('rootguide_tour_seen')) {
+      // wait until boot has cleared the app
+      const checkApp = setInterval(() => {
+        if (document.getElementById('app').classList.contains('visible')) {
+          clearInterval(checkApp);
+          setTimeout(startTour, 600);
+        }
+      }, 200);
+    }
+  } catch(e) {}
+}, 100);
+
+window.addEventListener('resize', () => { if (tourActive) showTourStep(tourIndex); });
+</script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+# --- NIEMALS hochladen (Geheimnisse) ---
+digistore/
+*-master-codes.*
+*master.txt
+*master.md
+*master-code*
+
+# --- Backups & alte Versionen ---
+*.bak
+*.bak.html
+*.backup
+*-backup.*
+*_backup.*
+*.bak.*
+
+# --- Original-Quellen die nicht ins Repo gehören ---
+RootGuide-main/RootGuide-main/
+cam-bridge/
+.claude/
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- OS-Müll ---
+Thumbs.db
+Desktop.ini
+.DS_Store
+$RECYCLE.BIN/
+
+# --- Build-Artefakte / Node ---
+node_modules/
+dist/
+build/
+
+# --- Temporäre / Arbeits-Dateien ---
+*.tmp
+*.log
+*-NOTIZ.txt
+*-TODO.txt

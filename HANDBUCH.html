@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌱 RootGuide – Handbuch</title>
+<meta name="description" content="Vollständiges Handbuch zur RootGuide-App: Erste Schritte, Pflanzen anlegen, pH/EC verstehen, Dünger-Rechner, Grow-Tagebuch, Timelapse, Troubleshooting und Glossar.">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --neon:#00ff88; --neon2:#00cfff; --neon3:#ff6b35; --neon-bloom:#ffaa44;
+    --bg:#0a0d12; --panel:#0f1318; --panel2:#161c24;
+    --line:#1e2d20; --line-strong:#00ff8830;
+    --text:#c8e6c9; --text-bright:#e8fff0; --text-dim:#4a6d4e;
+    --warn:#ff4060;
+    --shadow:0 0 30px #00ff8820;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{max-width:100%;overflow-x:hidden}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Rajdhani',system-ui,'Segoe UI','Roboto',sans-serif;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(0,255,136,0.10), transparent 60%),
+      radial-gradient(900px 500px at 90% 30%, rgba(0,207,255,0.06), transparent 60%),
+      var(--bg);
+    color:var(--text); line-height:1.65; padding:0 0 4rem; font-size:17px;
+  }
+  a{color:var(--neon2); text-decoration:none}
+  a:hover{color:var(--neon)}
+  a:focus-visible, button:focus-visible, summary:focus-visible{
+    outline:3px solid var(--neon); outline-offset:3px; border-radius:0.3rem;
+  }
+
+  .skip-link{
+    position:absolute; left:0.6rem; top:-3rem; z-index:50;
+    background:var(--neon); color:#001a0c; font-weight:800;
+    padding:0.6rem 1rem; border-radius:0.6rem; text-decoration:none;
+    transition:top 0.15s;
+  }
+  .skip-link:focus{top:0.6rem}
+
+  header.hb-top{
+    position:sticky; top:0; z-index:10;
+    display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap;
+    padding:0.9rem 1.2rem;
+    background:rgba(10,13,18,0.92);
+    border-bottom:1px solid var(--line-strong);
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  }
+  header.hb-top .brand{
+    font-family:'Share Tech Mono',monospace;
+    font-weight:700; font-size:1.15rem; letter-spacing:0.05em;
+    background:linear-gradient(90deg, var(--neon), var(--neon2));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  header.hb-top .sub{color:var(--text-dim); font-size:0.85rem; font-family:'Share Tech Mono',monospace; letter-spacing:0.1em}
+  header.hb-top .home{margin-left:auto}
+  .btn{
+    display:inline-block; text-decoration:none; cursor:pointer;
+    background:linear-gradient(90deg, rgba(0,255,136,0.18), rgba(0,207,255,0.18));
+    border:1px solid var(--line-strong); color:var(--text-bright);
+    padding:0.5rem 0.9rem; border-radius:0.6rem;
+    font-family:'Share Tech Mono',monospace;
+    font-weight:700; font-size:0.85rem; letter-spacing:0.05em;
+  }
+  .btn:hover{border-color:var(--neon); color:var(--neon)}
+
+  main{max-width:920px; margin:0 auto; padding:0 1.1rem}
+  .hero{text-align:center; padding:2.6rem 1rem 1.4rem}
+  .hero h1{
+    font-family:'Share Tech Mono',monospace;
+    font-size:clamp(1.8rem, 5vw, 2.8rem); line-height:1.15;
+    background:linear-gradient(90deg, var(--neon), var(--neon2), var(--neon-bloom));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 40px rgba(0,255,136,0.4);
+    letter-spacing:0.04em;
+  }
+  .hero p{color:var(--text-dim); margin-top:0.6rem; font-size:1.05rem}
+  .hero .v{
+    display:inline-block; margin-top:0.8rem;
+    font-family:'Share Tech Mono',monospace;
+    font-size:0.78rem; letter-spacing:0.18em;
+    color:var(--neon); border:1px solid var(--line-strong);
+    padding:4px 12px; border-radius:2px;
+  }
+
+  nav.toc{
+    background:var(--panel); border:1px solid var(--line-strong);
+    border-radius:1rem; padding:1.2rem 1.3rem; margin:1.6rem 0;
+    box-shadow:var(--shadow);
+  }
+  nav.toc h2{
+    font-family:'Share Tech Mono',monospace;
+    font-size:0.95rem; color:var(--neon); margin-bottom:0.8rem;
+    text-transform:uppercase; letter-spacing:0.12em;
+  }
+  nav.toc ol{
+    list-style:none; display:grid; grid-template-columns:1fr; gap:0.35rem;
+    counter-reset:toc;
+  }
+  @media(min-width:560px){nav.toc ol{grid-template-columns:1fr 1fr}}
+  nav.toc li{counter-increment:toc}
+  nav.toc a{
+    display:block; text-decoration:none; color:var(--text);
+    padding:0.5rem 0.7rem; border-radius:0.5rem;
+    transition:background 0.15s;
+  }
+  nav.toc a::before{
+    content:counter(toc, decimal-leading-zero) ".";
+    color:var(--neon-bloom); font-family:'Share Tech Mono',monospace;
+    font-weight:700; margin-right:0.6rem;
+  }
+  nav.toc a:hover{background:var(--panel2); color:var(--neon)}
+
+  section.card{
+    background:var(--panel); border:1px solid var(--line-strong);
+    border-radius:1rem; padding:1.5rem 1.4rem; margin:1.2rem 0;
+    box-shadow:0 2px 16px rgba(0,0,0,0.3);
+  }
+  section.card h2{
+    font-family:'Share Tech Mono',monospace;
+    font-size:1.4rem; color:var(--text-bright);
+    margin-bottom:0.9rem;
+    display:flex; align-items:center; gap:0.5rem;
+    border-left:4px solid var(--neon);
+    padding-left:0.8rem;
+    letter-spacing:0.03em;
+  }
+  section.card h3{
+    font-family:'Share Tech Mono',monospace;
+    font-size:1.05rem; margin:1.4rem 0 0.5rem;
+    color:var(--neon); letter-spacing:0.04em;
+  }
+  section.card h4{
+    font-size:1rem; margin:1rem 0 0.4rem;
+    color:var(--neon-bloom);
+  }
+  section.card p{margin:0.6rem 0; color:var(--text)}
+  section.card ul, section.card ol{margin:0.5rem 0 0.6rem 1.4rem}
+  section.card li{margin:0.4rem 0}
+  strong{color:var(--text-bright)}
+  code{
+    background:var(--panel2); border:1px solid var(--line-strong);
+    border-radius:0.4rem; padding:0.1rem 0.45rem;
+    font-family:'Share Tech Mono','Consolas',monospace;
+    color:var(--neon); font-size:0.92em;
+  }
+  kbd{
+    background:var(--panel2); border:1px solid var(--line-strong);
+    border-bottom-width:2px;
+    border-radius:0.3rem; padding:0.05rem 0.5rem;
+    font-family:'Share Tech Mono',monospace;
+    color:var(--text-bright); font-size:0.88em;
+  }
+
+  .callout{
+    border-radius:0.7rem; padding:0.95rem 1.1rem; margin:1rem 0;
+    border:1px solid var(--line-strong); background:var(--panel2);
+    display:flex; gap:0.8rem; align-items:flex-start;
+  }
+  .callout .ic{font-size:1.4rem; flex:0 0 auto; line-height:1.2}
+  .callout.warn{border-color:rgba(255,64,96,0.55); background:rgba(255,64,96,0.08)}
+  .callout.tip{border-color:rgba(0,255,136,0.5); background:rgba(0,255,136,0.07)}
+  .callout.info{border-color:rgba(0,207,255,0.5); background:rgba(0,207,255,0.07)}
+  .callout.bloom{border-color:rgba(255,170,68,0.5); background:rgba(255,170,68,0.07)}
+  .callout strong{display:block; color:var(--text-bright); margin-bottom:0.25rem}
+
+  /* Schritt-Listen */
+  ol.steps{counter-reset:step; list-style:none; margin-left:0}
+  ol.steps li{
+    position:relative; padding-left:2.4rem;
+    counter-increment:step; margin:0.7rem 0;
+  }
+  ol.steps li::before{
+    content:counter(step);
+    position:absolute; left:0; top:0.05rem;
+    width:1.8rem; height:1.8rem; line-height:1.8rem;
+    text-align:center;
+    background:var(--neon); color:#001a0c;
+    border-radius:50%;
+    font-family:'Share Tech Mono',monospace;
+    font-weight:700; font-size:0.85rem;
+    box-shadow:0 0 12px rgba(0,255,136,0.4);
+  }
+
+  /* Glossar-Tabelle */
+  table.gloss{
+    width:100%; border-collapse:collapse; margin:1rem 0;
+    background:var(--panel2); border:1px solid var(--line-strong);
+    border-radius:0.5rem; overflow:hidden;
+  }
+  table.gloss th, table.gloss td{
+    padding:0.7rem 0.9rem; text-align:left;
+    border-bottom:1px solid var(--line); vertical-align:top;
+  }
+  table.gloss th{
+    background:var(--panel); color:var(--neon);
+    font-family:'Share Tech Mono',monospace; font-size:0.85rem;
+    letter-spacing:0.06em; text-transform:uppercase;
+  }
+  table.gloss td:first-child{
+    color:var(--neon-bloom); font-weight:700;
+    font-family:'Share Tech Mono',monospace; white-space:nowrap;
+  }
+  table.gloss tr:last-child td{border-bottom:none}
+  @media(max-width:600px){
+    table.gloss, table.gloss tbody, table.gloss tr, table.gloss td, table.gloss th{
+      display:block; width:100%;
+    }
+    table.gloss th{border-bottom:2px solid var(--neon)}
+    table.gloss td{border-bottom:1px solid var(--line)}
+    table.gloss td:first-child{padding-bottom:0.2rem}
+  }
+
+  /* Troubleshooting-Boxen */
+  details.trouble{
+    background:var(--panel2); border:1px solid var(--line-strong);
+    border-radius:0.6rem; padding:0.8rem 1.1rem; margin:0.6rem 0;
+  }
+  details.trouble summary{
+    cursor:pointer; font-weight:700; color:var(--neon);
+    font-family:'Share Tech Mono',monospace; font-size:0.95rem;
+    list-style:none; letter-spacing:0.03em;
+  }
+  details.trouble summary::before{
+    content:'+ '; color:var(--neon-bloom);
+  }
+  details.trouble[open] summary::before{content:'− '}
+  details.trouble summary::-webkit-details-marker{display:none}
+  details.trouble p, details.trouble ul{margin-top:0.6rem; color:var(--text)}
+
+  /* Tasten-Liste */
+  .keys{display:grid; grid-template-columns:auto 1fr; gap:0.5rem 1rem; margin:0.6rem 0}
+  .keys kbd{justify-self:start}
+
+  footer.hb-foot{
+    text-align:center; margin-top:3rem; padding:1.6rem 1rem;
+    color:var(--text-dim); font-size:0.88rem;
+    border-top:1px solid var(--line-strong);
+  }
+  footer.hb-foot a{color:var(--neon)}
+
+  @media (prefers-reduced-motion:reduce){
+    *, *::before, *::after{animation:none !important; transition:none !important; scroll-behavior:auto !important}
+  }
+  @media (prefers-contrast:more){
+    body{background:#000; color:#fff}
+    section.card, nav.toc, .callout, details.trouble{border-width:2px}
+  }
+  @media print{
+    body{background:#fff; color:#000}
+    header.hb-top{position:static; background:#fff}
+    nav.toc a, section.card, .callout, details.trouble{background:#fff !important; color:#000 !important; border-color:#999 !important}
+    .hero h1, header.hb-top .brand{color:#000 !important; background:none !important; -webkit-text-fill-color:#000 !important}
+  }
+</style>
+</head>
+<body>
+
+<a href="#inhalt" class="skip-link">Zum Inhalt springen</a>
+
+<header class="hb-top" role="banner">
+  <div>
+    <div class="brand">🌱 ROOTGUIDE</div>
+    <div class="sub">HANDBUCH &middot; v1.0</div>
+  </div>
+  <a class="btn home" href="index.html">← Zur Startseite</a>
+</header>
+
+<main id="inhalt">
+
+  <section class="hero">
+    <h1>RootGuide &mdash; Handbuch</h1>
+    <p>Alles, was du brauchst, um aus deinen Pflanzen das Maximum herauszuholen.</p>
+    <div class="v">VERSION 1.0 &middot; STAND 06/2026</div>
+  </section>
+
+  <nav class="toc" aria-label="Inhaltsverzeichnis">
+    <h2>Inhalt</h2>
+    <ol>
+      <li><a href="#start">Erste Schritte &amp; Boot</a></li>
+      <li><a href="#tour">Die App-Tour</a></li>
+      <li><a href="#oberflaeche">Oberfläche &amp; Bedienung</a></li>
+      <li><a href="#pflanzen">Pflanzen anlegen &amp; verwalten</a></li>
+      <li><a href="#phase">Phasen: Jungpflanze, Veg, Blüte</a></li>
+      <li><a href="#duenger">Multi-Dünger-Rechner</a></li>
+      <li><a href="#abstand">Pflanzabstand &amp; Beet-Planung</a></li>
+      <li><a href="#tagebuch">Grow-Tagebuch</a></li>
+      <li><a href="#kamera">Live-Kamera &amp; IP-Cam</a></li>
+      <li><a href="#timelapse">Timelapse-Aufnahme</a></li>
+      <li><a href="#krankheiten">Krankheits-Bibliothek</a></li>
+      <li><a href="#daten">Daten exportieren &amp; sichern</a></li>
+      <li><a href="#lizenz">Lizenz &amp; Freischaltcode</a></li>
+      <li><a href="#tastatur">Tastatur-Kürzel</a></li>
+      <li><a href="#pwa">App installieren (PWA)</a></li>
+      <li><a href="#glossar">Glossar &mdash; pH, EC, PPFD &amp; Co.</a></li>
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
+      <li><a href="#support">Support &amp; Kontakt</a></li>
+    </ol>
+  </nav>
+
+  <section class="card" id="start">
+    <h2>1. Erste Schritte &amp; Boot</h2>
+    <p>RootGuide ist eine einzelne HTML-Datei. Du kannst sie direkt im Browser öffnen &mdash; es muss
+      nichts installiert werden, kein Konto, kein Login.</p>
+    <ol class="steps">
+      <li><code>index.html</code> doppelklicken (öffnet sich in deinem Standard-Browser).</li>
+      <li>Boot-Animation läuft ca. 3 Sekunden &mdash; Matrix-Effekt + Progressbar &mdash; danach erscheint die App.</li>
+      <li>Beim allerersten Start startet automatisch die <strong>App-Tour</strong> (siehe nächster Abschnitt). Sie zeigt dir alle wichtigen Bereiche.</li>
+    </ol>
+    <div class="callout tip">
+      <span class="ic" aria-hidden="true">💡</span>
+      <div><strong>Empfohlene Browser:</strong> Chrome, Edge, Firefox, Safari &mdash; jeweils in aktueller Version.
+      Auf Android und iPhone funktioniert RootGuide ebenfalls. Für die Live-Kamera-Funktion ist
+      ein moderner Browser nötig (Chrome/Edge bevorzugt).</div>
+    </div>
+    <div class="callout info">
+      <span class="ic" aria-hidden="true">📍</span>
+      <div><strong>Wo sollte ich die Datei speichern?</strong> Idealerweise in einem eigenen Ordner
+      wie <code>Dokumente/RootGuide/</code>. Lege das Handbuch (<code>HANDBUCH.html</code>) und
+      eventuelle Exporte in denselben Ordner &mdash; so behältst du alles zusammen.</div>
+    </div>
+  </section>
+
+  <section class="card" id="tour">
+    <h2>2. Die App-Tour</h2>
+    <p>Die App-Tour ist ein interaktiver Walkthrough in 8 Schritten. Sie startet automatisch beim
+      ersten Öffnen und du kannst sie jederzeit neu starten.</p>
+    <h3>Tour erneut starten</h3>
+    <p>Oben rechts im Header findest du den Button <code>🧭 TOUR</code>. Ein Klick darauf
+      startet die Tour von Anfang an.</p>
+    <h3>Steuerung während der Tour</h3>
+    <div class="keys">
+      <kbd>→</kbd> <span>Nächster Schritt</span>
+      <kbd>Enter</kbd> <span>Nächster Schritt</span>
+      <kbd>←</kbd> <span>Vorheriger Schritt</span>
+      <kbd>Esc</kbd> <span>Tour abbrechen</span>
+    </div>
+    <p>Alternativ: <strong>Klick außerhalb des Highlights</strong> oder auf den Button
+      „Überspringen" beendet die Tour ebenfalls.</p>
+    <div class="callout tip">
+      <span class="ic" aria-hidden="true">🧭</span>
+      <div><strong>Die 8 Tour-Schritte:</strong> Status-Leiste → Krankheits-Bibliothek →
+      Pflanze &amp; Phase → Eigene Pflanze anlegen → Dünger-Rechner → Grow-Tagebuch →
+      Timelapse → Export/Import.</div>
+    </div>
+  </section>
+
+  <section class="card" id="oberflaeche">
+    <h2>3. Oberfläche &amp; Bedienung</h2>
+    <h3>Header-Steuerung</h3>
+    <ul>
+      <li><strong>Zoom:</strong> Die <code>−</code> / <code>+</code>-Buttons skalieren die gesamte App
+        zwischen 40% und 200%. Praktisch für kleine Bildschirme oder Sehschwäche.</li>
+      <li><strong>RESET:</strong> Setzt den Zoom auf 100% zurück.</li>
+      <li><strong>☀️ HELL / 🌙 DUNKEL:</strong> Wechsel zwischen Dark- und Light-Theme.
+        Deine Wahl wird im Browser gespeichert.</li>
+      <li><strong>🧭 TOUR:</strong> Startet den Walkthrough.</li>
+    </ul>
+    <h3>Status-Leiste</h3>
+    <p>Direkt unter dem Header siehst du drei Info-Karten:</p>
+    <ul>
+      <li><strong>PFLANZEN:</strong> Anzahl der erfassten Pflanzen in deiner Datenbank.</li>
+      <li><strong>AKTUELLE PHASE:</strong> Phase der gerade ausgewählten Pflanze (Jungpflanze /
+        Vegetativ / Blüte).</li>
+      <li><strong>EMPFEHLUNG EC:</strong> EC-Sollwert für die aktuelle Pflanze in der aktuellen
+        Phase.</li>
+    </ul>
+    <h3>Sektionen</h3>
+    <p>Die App ist in Sektionen unterteilt &mdash; jede mit eigener Akzentfarbe (Pille links):</p>
+    <ul>
+      <li>🟠 <strong>Krankheits-Bibliothek</strong> (orange Pille)</li>
+      <li>🟢 <strong>Pflanze &amp; Phase</strong> (grüne Pille)</li>
+      <li>🔵 <strong>Eigene Pflanze hinzufügen</strong> (cyan Pille)</li>
+      <li>🔵 <strong>Dünger-Dosierung</strong> (cyan Pille)</li>
+      <li>🟡 <strong>Grow-Tagebuch</strong> (bloom-orange Pille)</li>
+      <li>🔵 <strong>Timelapse</strong> (cyan Pille)</li>
+      <li>🟠 <strong>Datenbank Import/Export</strong> (orange Pille)</li>
+    </ul>
+  </section>
+
+  <section class="card" id="pflanzen">
+    <h2>4. Pflanzen anlegen &amp; verwalten</h2>
+    <p>RootGuide kommt mit einer Sammlung an Standard-Pflanzen, die du beliebig erweitern,
+      bearbeiten oder löschen kannst.</p>
+
+    <h3>Eigene Pflanze anlegen</h3>
+    <ol class="steps">
+      <li>Scrolle zur Sektion <strong>EIGENE PFLANZE HINZUFÜGEN</strong>.</li>
+      <li><strong>Icon</strong> wählen (Emoji-Liste &mdash; alphabetisch sortiert von Apfel bis Zucchini).</li>
+      <li><strong>Name</strong> eingeben (z. B. „Sungold-Tomate" oder „Chili Habanero").</li>
+      <li><strong>Substrat</strong> wählen: Erde, Steinwolle oder Cocos.</li>
+      <li><strong>Pflanzabstände</strong> festlegen: Reihenabstand, Pflanzenabstand, Topfdurchmesser (alle in cm).</li>
+      <li><strong>pH-Werte</strong> pro Phase (Jungpflanze / Veg / Blüte). Beispiel-Default: pH 5.5–6.5 für Hydroponik.</li>
+      <li><strong>EC-Werte</strong> pro Phase. Beispiel: EC 0.8–1.4 in Veg, EC 1.2–2.0 in Blüte.</li>
+      <li><strong>PPFD-Lichtwerte</strong> pro Phase (optional, für Pflanzenlampen-Setup).</li>
+      <li>Optional eine kurze <strong>Notiz</strong> (z. B. „kälteempfindlich", „braucht Stütze").</li>
+      <li><strong>🌱 PFLANZE SPEICHERN</strong> klicken.</li>
+    </ol>
+
+    <div class="callout info">
+      <span class="ic" aria-hidden="true">ℹ️</span>
+      <div><strong>Pflichtfelder</strong> sind Icon, Name und Substrat. Alle pH-/EC-/PPFD-Werte
+      sind optional &mdash; wenn du sie leer lässt, zeigt die App in der betreffenden Phase
+      einfach „--" an.</div>
+    </div>
+
+    <h3>Pflanze bearbeiten</h3>
+    <ol class="steps">
+      <li>Pflanze im Dropdown <strong>PFLANZE</strong> auswählen.</li>
+      <li>Auf <strong>✏️ Bearbeiten</strong> klicken &mdash; die Werte werden ins Formular geladen.</li>
+      <li>Änderungen vornehmen, <strong>🌱 PFLANZE SPEICHERN</strong> klicken.</li>
+    </ol>
+
+    <h3>Pflanze löschen</h3>
+    <p>Pflanze auswählen → <strong>🗑️ Löschen</strong> → Bestätigung.</p>
+    <div class="callout warn">
+      <span class="ic" aria-hidden="true">⚠️</span>
+      <div><strong>Vorsicht:</strong> Gelöschte Pflanzen sind weg, es sei denn du hast vorher
+      einen <a href="#daten">Export</a> gemacht. Wenn es eine Standard-Pflanze war, kannst du
+      sie über <code>♻️ STANDARD-PFLANZEN</code> wiederherstellen (legt alle fehlenden
+      Standard-Pflanzen neu an, deine eigenen bleiben erhalten).</div>
+    </div>
+  </section>
+
+  <section class="card" id="phase">
+    <h2>5. Phasen: Jungpflanze, Veg, Blüte</h2>
+    <p>RootGuide kennt drei Wachstumsphasen mit jeweils eigenen pH-, EC- und PPFD-Empfehlungen:</p>
+    <ul>
+      <li>🌱 <strong>JUNGPFLANZE</strong> &mdash; Anzucht/Keimling, niedrige EC, hoher Stickstoff-Bedarf, gedämpftes Licht.</li>
+      <li>🌿 <strong>VEGETATIV</strong> &mdash; Blatt- und Stamm-Wachstum, mittlere EC, viel Stickstoff.</li>
+      <li>🌸 <strong>BLÜTE/FRUCHT</strong> &mdash; Blüten- und Fruchtbildung, höhere EC, Phosphor/Kalium dominieren.</li>
+    </ul>
+    <p>Klick auf einen Phasen-Button (in der Sektion <strong>PFLANZE &amp; PHASE</strong>) wechselt
+      die Anzeige. Die EC-Empfehlung in der Status-Leiste oben aktualisiert sich automatisch.</p>
+    <div class="callout tip">
+      <span class="ic" aria-hidden="true">🌱</span>
+      <div><strong>Praxis-Tipp:</strong> Notiere dir bei jedem Phasen-Wechsel ein Foto und einen
+      Tagebuch-Eintrag mit Datum und EC/pH-Messung. So siehst du im Nachhinein, ob deine
+      Werte passten und kannst beim nächsten Grow nachjustieren.</div>
+    </div>
+  </section>
+
+  <section class="card" id="duenger">
+    <h2>6. Multi-Dünger-Rechner</h2>
+    <p>Der Dünger-Rechner verwandelt einen Ziel-EC-Wert in eine konkrete Dosierung pro Liter
+      Wasser &mdash; egal ob Pulver- oder Lösungs-Dünger.</p>
+
+    <h3>So gehst du vor</h3>
+    <ol class="steps">
+      <li><strong>DÜNGER-MARKE</strong> wählen (verschiedene Marken vorkonfiguriert, eigene möglich).</li>
+      <li><strong>ZIEL EC</strong> eintragen (z. B. <code>1.8</code> mS/cm für Veg, <code>2.4</code> für Blüte).</li>
+      <li><strong>WASSER</strong> in Litern eintragen &mdash; auch mehrere Werte kommagetrennt erlaubt
+        (z. B. <code>5, 10, 20</code>). RootGuide rechnet dann für alle Mengen gleichzeitig.</li>
+      <li>Bei Pulver-Düngern: <strong>PULVER (g)</strong> und <strong>GELÖST IN WASSER (L)</strong>
+        eintragen (Stock-Lösung). Default: 900 g in 3.97 L.</li>
+      <li><strong>BERECHNEN</strong> klicken.</li>
+    </ol>
+
+    <h3>Was bekommst du?</h3>
+    <p>Eine Tabelle mit den exakten Mengen Pulver oder Lösung pro Liter und pro angegebener
+      Gesamt-Menge. Plus den Hinweis-Text der ausgewählten Marke (z. B. „Vor Gebrauch gut
+      schütteln" oder Sicherheitshinweise).</p>
+
+    <h3>Eigene Marke hinzufügen</h3>
+    <p>Du hast eine Dünger-Marke die nicht in der Liste ist? Klick auf
+      <strong>➕ EIGENE MARKE</strong> neben dem Marken-Dropdown:</p>
+    <ol class="steps">
+      <li><strong>Marken-Name</strong> eintragen (z. B. „Hesi TNT" oder „Mein Mix").</li>
+      <li><strong>Dosierungs-Modus</strong> wählen:
+        <ul style="margin-top:0.4rem">
+          <li><strong>Feste Richtwerte:</strong> Du gibst ml/L direkt an (z. B. 4 ml/L). Für Flüssig-Dünger
+            mit fixer Hersteller-Empfehlung.</li>
+          <li><strong>EC-basiert:</strong> Der Faktor wird mit dem Ziel-EC multipliziert (für Pulver-Stammlösungen).
+            Optional kannst du Pulver-Menge in Gramm und gelöstes Wasser in Litern eintragen.</li>
+        </ul>
+      </li>
+      <li>Pro Phase (Vegetativ / Blüte) <strong>Komponenten hinzufügen</strong> &mdash; jede mit
+        Bezeichnung und Faktor (z. B. „Grow" mit 4 ml/L).</li>
+      <li>Optional eine <strong>Notiz</strong> hinzufügen (Anmisch-Hinweis, Sicherheits-Info).</li>
+      <li><strong>💾 Speichern</strong> &mdash; deine Marke erscheint sofort im Dropdown mit dem
+        Hinweis „(eigen)".</li>
+    </ol>
+    <p>Eigene Marken lassen sich später erneut über denselben Button bearbeiten oder löschen
+      (Lösch-Knopf erscheint, wenn eine eigene Marke gerade ausgewählt ist). Alle eigenen
+      Marken werden lokal im Browser gespeichert &mdash; sie verlassen dein Gerät nicht.</p>
+
+    <div class="callout warn">
+      <span class="ic" aria-hidden="true">⚗️</span>
+      <div><strong>Wichtig:</strong> Die Berechnung ist eine Hilfestellung. Miss den EC nach
+      dem Anmischen IMMER nach &mdash; Leitungswasser-Härte, Wassertemperatur und Pulver-Charge
+      können die tatsächliche Leitfähigkeit beeinflussen. Im Zweifel langsam annähern.</div>
+    </div>
+  </section>
+
+  <section class="card" id="abstand">
+    <h2>7. Pflanzabstand &amp; Beet-Planung</h2>
+    <p>Beim Anlegen einer Pflanze trägst du drei Werte ein, die für die Beet-Planung wichtig sind:</p>
+    <ul>
+      <li>📏 <strong>Reihenabstand</strong> &mdash; Abstand zwischen zwei Reihen (cm).</li>
+      <li>📏 <strong>Pflanzenabstand</strong> &mdash; Abstand zweier Pflanzen innerhalb einer Reihe (cm).</li>
+      <li>📏 <strong>Topf-Ø</strong> &mdash; Durchmesser des Pflanztopfes (cm).</li>
+    </ul>
+    <p>Diese Werte bleiben pro Pflanze gespeichert und helfen dir bei der Planung von Beeten,
+      Hochbeeten oder Grow-Zelten.</p>
+
+    <h4>Beispielwerte (Indoor)</h4>
+    <ul>
+      <li><strong>Tomate (Hochwuchs):</strong> 60×40 cm, Topf 25 cm Ø</li>
+      <li><strong>Chili (mittelhoch):</strong> 50×40 cm, Topf 20 cm Ø</li>
+      <li><strong>Salat:</strong> 30×25 cm, Topf 12 cm Ø</li>
+      <li><strong>Basilikum:</strong> 25×20 cm, Topf 10 cm Ø</li>
+    </ul>
+    <div class="callout info">
+      <span class="ic" aria-hidden="true">📐</span>
+      <div>Die Werte sind Richtwerte. In Hydroponik-Systemen mit Steinwolle/Cocos können die
+      Abstände kleiner ausfallen, weil das Wurzelvolumen kleiner ist.</div>
+    </div>
+  </section>
+
+  <section class="card" id="tagebuch">
+    <h2>8. Grow-Tagebuch</h2>
+    <p>Das Tagebuch ist das Herzstück der Dokumentation. Hier landen alle Messungen, Notizen
+      und Fotos.</p>
+
+    <h3>Eintrag anlegen</h3>
+    <ol class="steps">
+      <li><strong>DATUM</strong> wählen (vorausgefüllt mit heute).</li>
+      <li><strong>PFLANZE</strong> eintragen (Freitext, z. B. <code>Tomate #1</code> oder einfach <code>Tomate</code>).</li>
+      <li><strong>PHASE</strong> wählen (Vegetativ oder Blüte/Frucht).</li>
+      <li>Messwerte eintragen: <strong>WASSER (L)</strong>, <strong>pH gemessen</strong>, <strong>EC gemessen</strong>.</li>
+      <li>Optional eine <strong>NOTIZ</strong> (z. B. „umgetopft", „Blätter leicht gelb", „erste Blüten").</li>
+      <li>Optional ein <strong>Foto</strong> hinzufügen (siehe nächster Abschnitt).</li>
+      <li><strong>📔 EINTRAG SPEICHERN</strong> klicken.</li>
+    </ol>
+
+    <h3>Tagebuch durchsuchen</h3>
+    <p>Unter dem Speichern-Button gibt es ein Suchfeld. Tippe einen Suchbegriff (Pflanzenname,
+      Notiz-Stichwort) &mdash; die Liste filtert sich live.</p>
+
+    <h3>Einträge löschen</h3>
+    <p>In der Liste hat jeder Eintrag ein Lösch-Symbol. Achtung: Das Löschen ist sofort &mdash;
+      es gibt keinen Papierkorb.</p>
+
+    <div class="callout tip">
+      <span class="ic" aria-hidden="true">📔</span>
+      <div><strong>Disziplin lohnt sich:</strong> Trag mindestens einmal pro Woche pH und EC
+      ein, auch wenn du nichts geändert hast. Nach 2–3 Monaten siehst du Muster, die du
+      sonst nie bemerkt hättest.</div>
+    </div>
+  </section>
+
+  <section class="card" id="kamera">
+    <h2>9. Live-Kamera &amp; IP-Cam</h2>
+    <p>Für Fotos im Tagebuch hast du drei Quellen zur Auswahl:</p>
+
+    <h3>📁 DATEI</h3>
+    <p>Klassischer Datei-Upload &mdash; wählst ein Bild von deinem Gerät aus. RootGuide skaliert
+      es automatisch herunter, um die Browser-Datenbank nicht zu sprengen.</p>
+
+    <h3>📷 LIVE-KAMERA</h3>
+    <ol class="steps">
+      <li>Auf <strong>📷 LIVE-KAMERA</strong> klicken.</li>
+      <li>Beim ersten Mal fragt dein Browser nach Kamera-Erlaubnis &mdash; „Zulassen" wählen.</li>
+      <li>Wenn du mehrere Kameras hast, im Dropdown die richtige auswählen.</li>
+      <li><strong>▶️ Kamera starten</strong>.</li>
+      <li>Wenn das Bild gut aussieht: <strong>📸 Aufnehmen</strong>.</li>
+      <li><strong>⏹ Stop</strong> beendet den Kamera-Stream.</li>
+    </ol>
+
+    <h3>🌐 IP-CAM</h3>
+    <p>Für IP-Kameras, die ein JPEG per HTTP liefern. Beispiele:</p>
+    <ul>
+      <li><strong>ESP32-CAM:</strong> <code>http://&lt;ESP32-IP&gt;/capture</code></li>
+      <li><strong>IP Webcam-App</strong> (Android): <code>http://&lt;Handy-IP&gt;:8080/shot.jpg</code></li>
+    </ul>
+    <ol class="steps">
+      <li>URL eintragen.</li>
+      <li><strong>🌐 Bild holen</strong> klicken.</li>
+    </ol>
+    <div class="callout warn">
+      <span class="ic" aria-hidden="true">🔓</span>
+      <div><strong>HTTPS-Hinweis:</strong> Wenn RootGuide selbst per <code>https://</code>
+      geladen ist (z. B. von gz-ai-stacks.de), blockiert der Browser oft reine
+      <code>http://</code>-IP-Cam-URLs (Mixed Content). Lösung: RootGuide lokal als Datei
+      öffnen oder Kamera mit HTTPS betreiben.</div>
+    </div>
+    <div class="callout info">
+      <span class="ic" aria-hidden="true">🛡️</span>
+      <div>Fotos werden lokal in der IndexedDB deines Browsers gespeichert &mdash; sie verlassen
+      dein Gerät NICHT. Es gibt keinen Cloud-Upload.</div>
+    </div>
+  </section>
+
+  <section class="card" id="timelapse">
+    <h2>10. Timelapse-Aufnahme</h2>
+    <p>RootGuide kann automatisch in Intervallen Bilder aufnehmen &mdash; perfekt für
+      Wachstums-Timelapses über Tage oder Wochen.</p>
+
+    <h3>Aufnahme starten</h3>
+    <ol class="steps">
+      <li><strong>QUELLE</strong> wählen: Live-Kamera oder IP-Cam.</li>
+      <li><strong>ALLE [n] [Einheit]</strong> &mdash; z. B. „alle 5 Minuten" oder „alle 30 Sekunden".</li>
+      <li><strong>ANZAHL BILDER</strong> &mdash; entweder eine feste Zahl (z. B. 60 Bilder) oder
+        <code>0</code> für „bis Stop".</li>
+      <li>Bei IP-Cam: die <strong>IP-CAM-URL</strong> eintragen.</li>
+      <li>RootGuide zeigt dir unter dem Formular eine Schätzung („~60 Bilder, ~5 Std").</li>
+      <li><strong>▶️ Start</strong> klicken.</li>
+    </ol>
+
+    <h3>Während der Aufnahme</h3>
+    <p>Die Seite muss <strong>geöffnet bleiben</strong>. RootGuide aktiviert einen
+      <strong>Wake-Lock</strong>, damit der Bildschirm nicht in den Standby geht. Die Status-Anzeige
+      zeigt dir Live-Fortschritt (Bild-Zähler, Restzeit).</p>
+
+    <h3>Galerie &amp; Abspielen</h3>
+    <p>Aufgenommene Bilder erscheinen unten in der Galerie. Klicke ein Bild an, um es ins
+      Tagebuch zu übernehmen. Mit <strong>▶️ Abspielen</strong> startest du die Sequenz als
+      Timelapse &mdash; Tempo wählbar (2/s bis 15/s).</p>
+
+    <div class="callout bloom">
+      <span class="ic" aria-hidden="true">💾</span>
+      <div><strong>Speicher-Hinweis:</strong> Bilder liegen in der IndexedDB. 500 Bilder in
+      mittlerer Auflösung brauchen ca. 50–100 MB. Bei großen Aufnahmen die Galerie
+      regelmäßig leeren oder Bilder ins Tagebuch übernehmen und einzeln archivieren.</div>
+    </div>
+    <div class="callout warn">
+      <span class="ic" aria-hidden="true">🔋</span>
+      <div><strong>Akku:</strong> Wake-Lock hält den Bildschirm wach &mdash; das kostet Akku.
+      Bei längeren Timelapses Tablet/Handy am Netz lassen.</div>
+    </div>
+  </section>
+
+  <section class="card" id="krankheiten">
+    <h2>11. Krankheits-Bibliothek</h2>
+    <p>In der Krankheits-Bibliothek findest du eine Sammlung typischer Pflanzen-Krankheiten,
+      Schädlinge und Mangelerscheinungen mit:</p>
+    <ul>
+      <li><strong>Symptome</strong> &mdash; wie erkennt man's?</li>
+      <li><strong>Ursachen</strong> &mdash; was löst es aus?</li>
+      <li><strong>Behandlung</strong> &mdash; was kann man tun?</li>
+      <li><strong>Vorbeugung</strong> &mdash; wie verhindern beim nächsten Grow?</li>
+    </ul>
+
+    <h3>Suche</h3>
+    <p>Suchfeld benutzen oder im Dropdown direkt auswählen. Enthalten sind u. a.:
+      Echter/Falscher Mehltau, Anthraknose, Wurzelfäule, Blattfleckenkrankheit, Kräuselkrankheit,
+      Feuerbrand, Rußtau, Bakterienwelke, Spinnmilben, Trauermücken, Thripse, Weiße Fliege,
+      Blattläuse, Grauschimmel/Botrytis sowie Mangelerscheinungen wie Stickstoff-, Phosphor-
+      und Kaliummangel.</p>
+
+    <div class="callout info">
+      <span class="ic" aria-hidden="true">🔬</span>
+      <div>Die Einträge sind Lern- und Erst-Orientierungshilfen. Bei unklaren Symptomen
+      Labor-Analyse oder einen Fachbetrieb fragen &mdash; manche Krankheiten sehen sich
+      zum Verwechseln ähnlich.</div>
+    </div>
+  </section>
+
+  <section class="card" id="daten">
+    <h2>12. Daten exportieren &amp; sichern</h2>
+    <p>Deine RootGuide-Daten liegen ausschließlich lokal in deinem Browser. Das bedeutet:
+      Backup ist deine Sache.</p>
+
+    <h3>Export</h3>
+    <ol class="steps">
+      <li>Scrolle nach unten zur Sektion <strong>📁 DATENBANK IMPORT/EXPORT</strong>.</li>
+      <li>Klick auf <strong>📁 EXPORTIEREN (Ordner wählen)</strong>.</li>
+      <li>Speicherort wählen &mdash; RootGuide legt eine JSON-Datei mit allen Pflanzen-Daten ab.</li>
+    </ol>
+
+    <h3>Import</h3>
+    <ol class="steps">
+      <li><strong>📂 IMPORTIEREN</strong> klicken.</li>
+      <li>Eine zuvor exportierte JSON-Datei auswählen.</li>
+      <li>Die Pflanzen werden in die Datenbank übernommen (Duplikate werden zusammengeführt).</li>
+    </ol>
+
+    <h3>Standard-Pflanzen wiederherstellen</h3>
+    <p><strong>♻️ STANDARD-PFLANZEN</strong> legt alle mitgelieferten Standard-Pflanzen wieder an.
+      Deine eigenen Pflanzen bleiben unverändert.</p>
+
+    <div class="callout warn">
+      <span class="ic" aria-hidden="true">💾</span>
+      <div><strong>Browser-Daten nicht löschen!</strong> Wenn du in den Browser-Einstellungen
+      „Website-Daten löschen" für RootGuide ausführst, sind alle deine Pflanzen, Tagebuch-Einträge
+      und Fotos weg. Mach <strong>vorher</strong> einen Export.</div>
+    </div>
+    <div class="callout tip">
+      <span class="ic" aria-hidden="true">📅</span>
+      <div><strong>Backup-Routine:</strong> Einmal pro Woche oder vor jedem Browser-Update einen
+      Export ziehen. Die JSON-Datei ist klein (Pflanzen + Tagebuch-Einträge ohne Fotos),
+      ein paar KB.</div>
+    </div>
+    <div class="callout info">
+      <span class="ic" aria-hidden="true">📷</span>
+      <div><strong>Fotos werden separat behandelt:</strong> Die JSON-Export-Datei enthält
+      momentan nur Stammdaten und Tagebuch-Texte, nicht die großen Foto-Binaries. Wichtige
+      Fotos zusätzlich per Rechtsklick speichern.</div>
+    </div>
+  </section>
+
+  <section class="card" id="lizenz">
+    <h2>13. Lizenz &amp; Freischaltcode</h2>
+    <p>Du hast RootGuide gekauft &mdash; herzlichen Dank! Die Vollversion wird mit deinem
+      Freischaltcode aktiviert, den du nach dem Kauf von Digistore24 erhalten hast.</p>
+
+    <h3>Code eingeben</h3>
+    <ol class="steps">
+      <li>Lizenz-Modal öffnen (über den Header-Button oder beim ersten Start angefordert).</li>
+      <li>Code eintragen (genau wie geliefert &mdash; auf Groß-/Kleinschreibung achten).</li>
+      <li>Bestätigen &mdash; alle Features sind freigeschaltet.</li>
+    </ol>
+
+    <h3>Code verloren?</h3>
+    <p>Der Freischaltcode steht in deiner Bestellbestätigungs-E-Mail von Digistore24. Wenn du
+      sie nicht mehr findest, schreib eine E-Mail an
+      <a href="mailto:gz.ai.stacks@gmail.com">gz.ai.stacks@gmail.com</a> mit deiner
+      Bestell-/Transaktions-Nummer &mdash; wir helfen weiter.</p>
+
+    <div class="callout info">
+      <span class="ic" aria-hidden="true">🔑</span>
+      <div>Der Code ist personengebunden. Eine Weitergabe an Dritte ist gemäß AGB nicht
+      gestattet &mdash; verstößt jemand dagegen, kann der Anbieter den Code sperren.</div>
+    </div>
+  </section>
+
+  <section class="card" id="tastatur">
+    <h2>14. Tastatur-Kürzel</h2>
+    <h3>App-Tour</h3>
+    <div class="keys">
+      <kbd>→</kbd> <span>Nächster Schritt</span>
+      <kbd>Enter</kbd> <span>Nächster Schritt / Aktion bestätigen</span>
+      <kbd>←</kbd> <span>Vorheriger Schritt</span>
+      <kbd>Esc</kbd> <span>Tour abbrechen</span>
+    </div>
+    <h3>Allgemein (Browser-Standard)</h3>
+    <div class="keys">
+      <kbd>Strg</kbd>+<kbd>+</kbd> <span>Browser-Zoom rein (zusätzlich zum App-Zoom)</span>
+      <kbd>Strg</kbd>+<kbd>−</kbd> <span>Browser-Zoom raus</span>
+      <kbd>Strg</kbd>+<kbd>0</kbd> <span>Browser-Zoom zurücksetzen</span>
+      <kbd>F5</kbd> <span>Seite neu laden (Daten bleiben erhalten)</span>
+      <kbd>Strg</kbd>+<kbd>F5</kbd> <span>Hard-Reload (Cache leeren)</span>
+      <kbd>F11</kbd> <span>Vollbild ein/aus</span>
+    </div>
+  </section>
+
+  <section class="card" id="pwa">
+    <h2>15. Als App installieren (PWA)</h2>
+    <p>RootGuide ist eine Progressive Web App &mdash; du kannst sie wie eine echte App auf
+      Homescreen oder Desktop installieren.</p>
+
+    <h3>Chrome / Edge (Desktop)</h3>
+    <ol class="steps">
+      <li>In der Adressleiste erscheint rechts ein <strong>Installations-Symbol</strong>
+        (kleines Pfeil-in-Bildschirm-Icon).</li>
+      <li>Anklicken → <strong>Installieren</strong>.</li>
+      <li>RootGuide bekommt einen Eintrag im Startmenü und ein eigenes App-Fenster ohne Adressleiste.</li>
+    </ol>
+
+    <h3>Chrome / Safari (Mobil)</h3>
+    <ol class="steps">
+      <li>Menü → <strong>Zum Startbildschirm hinzufügen</strong>.</li>
+      <li>Name bestätigen → <strong>Hinzufügen</strong>.</li>
+      <li>RootGuide-Icon liegt auf dem Homescreen.</li>
+    </ol>
+
+    <div class="callout tip">
+      <span class="ic" aria-hidden="true">📲</span>
+      <div>Nach der Installation läuft RootGuide auch ohne Internet. Die installierte App
+      und die Browser-Variante teilen sich denselben Datenspeicher (gleicher localStorage,
+      gleiche IndexedDB).</div>
+    </div>
+  </section>
+
+  <section class="card" id="glossar">
+    <h2>16. Glossar &mdash; pH, EC, PPFD &amp; Co.</h2>
+    <p>Die wichtigsten Fachbegriffe im Überblick. Wer schon im Thema ist, kann diesen Abschnitt
+      überspringen.</p>
+
+    <table class="gloss" aria-label="Glossar">
+      <thead>
+        <tr><th>Begriff</th><th>Bedeutung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>pH-Wert</td><td>Maß für sauer/alkalisch (0–14). 7 = neutral. Pflanzen mögen meist
+          leicht sauer (5.5–6.5). Falscher pH blockiert Nährstoffaufnahme.</td></tr>
+        <tr><td>EC</td><td><strong>Electrical Conductivity</strong> (mS/cm). Maß für die
+          Nährstoff-Konzentration in der Lösung. Höher = mehr Salze = mehr Dünger.</td></tr>
+        <tr><td>PPM</td><td><strong>Parts Per Million</strong>. Alternative Einheit zu EC.
+          Faustregel: 1.0 mS/cm ≈ 500–700 ppm (je nach Skala).</td></tr>
+        <tr><td>PPFD</td><td><strong>Photosynthetic Photon Flux Density</strong> (μmol/m²/s).
+          Maß für „wieviel Photosynthese-taugliches Licht" pro Sekunde auf einen Quadratmeter
+          fällt. Wichtiger als Lumen.</td></tr>
+        <tr><td>DLI</td><td><strong>Daily Light Integral</strong> (mol/m²/Tag). PPFD über
+          24 h aufsummiert &mdash; der „Lichthunger" einer Pflanze pro Tag.</td></tr>
+        <tr><td>NPK</td><td>Stickstoff (N), Phosphor (P), Kalium (K). Die drei
+          Haupt-Pflanzennährstoffe. Auf Dünger-Etiketten als Verhältnis angegeben (z. B. 3-1-2).</td></tr>
+        <tr><td>VPD</td><td><strong>Vapor Pressure Deficit</strong>. Maß für „wie durstig"
+          die Luft ist. Beeinflusst Transpiration und Wachstum stark. Optimal je nach Phase
+          0.8–1.5 kPa.</td></tr>
+        <tr><td>Veg / Vegetativ</td><td>Wachstumsphase mit Blatt- und Stammbildung,
+          vor der Blüte. Stickstoff-betont.</td></tr>
+        <tr><td>Bloom / Blüte</td><td>Phase der Blüten-/Frucht-Bildung. Phosphor und Kalium
+          dominieren, Stickstoff wird zurückgenommen.</td></tr>
+        <tr><td>Substrat</td><td>Material, in dem die Wurzeln wachsen. Erde, Cocos
+          (Kokosfaser), Steinwolle, Perlit, oder ganz ohne (Hydroponik mit Lösung).</td></tr>
+        <tr><td>Cocos</td><td>Substrat aus Kokosfaser. Hält Wasser gut, ist pH-neutral,
+          braucht aktive Düngung wie in Hydroponik.</td></tr>
+        <tr><td>Steinwolle</td><td>Inertes Substrat aus geschmolzenem Gestein. Klassisch in
+          Hydroponik. Hält viel Wasser, muss vor Erstbenutzung „pufferpressen" werden
+          (pH 5.5 einstellen).</td></tr>
+        <tr><td>Hydroponik</td><td>Anbau ohne Erde &mdash; Wurzeln hängen direkt in oder werden
+          regelmäßig mit Nährlösung berieselt. EC und pH müssen aktiv geregelt werden.</td></tr>
+        <tr><td>Stock-Lösung</td><td>Konzentrierte Vorlösung eines Dünger-Pulvers in
+          definierter Menge Wasser. Dann nur noch ml-weise dosiert.</td></tr>
+        <tr><td>Wake-Lock</td><td>Browser-Funktion, die den Bildschirm wachhält. RootGuide
+          nutzt sie während Timelapse-Aufnahmen.</td></tr>
+        <tr><td>localStorage / IndexedDB</td><td>Speicherbereiche im Browser. localStorage =
+          kleine Strings (Einstellungen, Stammdaten). IndexedDB = große Binärdaten
+          (Fotos, Timelapse-Bilder).</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card" id="troubleshooting">
+    <h2>17. Troubleshooting</h2>
+
+    <details class="trouble">
+      <summary>Die App lädt nicht / weißer Bildschirm</summary>
+      <ul>
+        <li>JavaScript im Browser aktiviert? (In Privatsphäre-Modi oft deaktiviert.)</li>
+        <li>Strg+F5 für Hard-Reload.</li>
+        <li>Browser-Konsole (F12) öffnen und nach roten Fehlern schauen.</li>
+        <li>Anderen Browser testen (Chrome/Edge als Referenz).</li>
+        <li>Datei korrekt heruntergeladen? Größe sollte ca. 110–130 KB betragen.</li>
+      </ul>
+    </details>
+
+    <details class="trouble">
+      <summary>Boot-Animation hängt fest</summary>
+      <ul>
+        <li>Schriftarten von Google Fonts werden geladen &mdash; bei sehr langsamer Verbindung
+          dauert es. 10 Sekunden warten.</li>
+        <li>Wenn das Problem bestehen bleibt, F12 öffnen → Konsole → Fehlermeldung notieren.</li>
+        <li>Browser-Cache leeren und neu laden.</li>
+      </ul>
+    </details>
+
+    <details class="trouble">
+      <summary>Live-Kamera funktioniert nicht</summary>
+      <ul>
+        <li>Browser muss Zugriff erlauben &mdash; in Adressleiste auf Schloss/Info-Icon klicken,
+          Kamera-Zugriff zurücksetzen.</li>
+        <li>Wenn RootGuide per <code>file://</code> geöffnet wurde: manche Browser blockieren
+          Kamera-Zugriff dort. Lösung: lokalen Webserver nutzen oder die Online-Version laden.</li>
+        <li>Andere App nutzt gerade die Kamera (Zoom, Teams)? Schließen.</li>
+      </ul>
+    </details>
+
+    <details class="trouble">
+      <summary>IP-Cam liefert kein Bild</summary>
+      <ul>
+        <li>URL im selben Netzwerk erreichbar? Im Browser direkt aufrufen und prüfen.</li>
+        <li>Mixed Content: HTTPS-Seite kann kein HTTP-Bild laden. RootGuide lokal als Datei öffnen
+          oder Kamera per HTTPS betreiben.</li>
+        <li>CORS-Header? Manche Kameras blockieren fremde Origins. ESP32-CAM kann das so
+          konfiguriert werden (Code-Anpassung).</li>
+      </ul>
+    </details>
+
+    <details class="trouble">
+      <summary>Daten sind nach Browser-Update weg</summary>
+      <ul>
+        <li>Manche Browser löschen bei großem Update den lokalen Speicher.
+          → <strong>Daher: regelmäßig per Export sichern!</strong></li>
+        <li>Inkognito/Privater Modus speichert NICHT &mdash; alles weg beim Schließen.</li>
+        <li>Browser-Profile: ein anderes Profil hat einen anderen localStorage.</li>
+      </ul>
+    </details>
+
+    <details class="trouble">
+      <summary>Timelapse stoppt nachts</summary>
+      <ul>
+        <li>Bildschirm geht in Standby trotz Wake-Lock? Manche Tablets ignorieren Wake-Lock im
+          Sparmodus.</li>
+        <li>Gerät am Strom anschließen.</li>
+        <li>Browser-Tab muss im Vordergrund bleiben &mdash; tab-Wechsel pausiert Timer auf einigen
+          Mobil-Browsern.</li>
+        <li>Bildschirmschoner deaktivieren.</li>
+      </ul>
+    </details>
+
+    <details class="trouble">
+      <summary>Dünger-Rechner zeigt unrealistische Mengen</summary>
+      <ul>
+        <li>Stock-Lösung korrekt eingestellt? Default (900 g in 3.97 L) ist eine
+          Beispiel-Konzentration &mdash; deine Marke kann anders sein.</li>
+        <li>Komma-Trennung bei Wassermenge prüfen: <code>5, 10, 20</code> erzeugt drei
+          Spalten. Wenn du nur eine Menge willst, nur eine Zahl.</li>
+        <li>EC-Ziel realistisch? 4.0+ ist meist zu hoch &mdash; verbrennt Wurzeln.</li>
+      </ul>
+    </details>
+
+    <details class="trouble">
+      <summary>Foto-Upload ist sehr groß und langsam</summary>
+      <ul>
+        <li>RootGuide skaliert Fotos automatisch herunter, aber sehr große Originale (50 MP+)
+          brauchen Sekunden.</li>
+        <li>Tipp: vorher in einer Foto-App auf 1080p verkleinern.</li>
+        <li>IndexedDB hat pro Browser ein Limit (oft 50% des freien Speichers).</li>
+      </ul>
+    </details>
+
+    <details class="trouble">
+      <summary>Lizenz-Code wird nicht akzeptiert</summary>
+      <ul>
+        <li>Genaue Schreibweise &mdash; Groß-/Kleinbuchstaben, Sonderzeichen, KEIN Leerzeichen am
+          Anfang/Ende.</li>
+        <li>Code aus der Digistore-Mail per Copy-Paste übernehmen, nicht abtippen.</li>
+        <li>Wenn weiterhin kein Erfolg: E-Mail an
+          <a href="mailto:gz.ai.stacks@gmail.com">gz.ai.stacks@gmail.com</a> mit der
+          Bestellnummer von Digistore24.</li>
+      </ul>
+    </details>
+
+  </section>
+
+  <section class="card" id="support">
+    <h2>18. Support &amp; Kontakt</h2>
+    <p>Du hast eine Frage, einen Bug entdeckt oder einen Vorschlag?</p>
+    <p>
+      <strong>E-Mail:</strong> <a href="mailto:gz.ai.stacks@gmail.com">gz.ai.stacks@gmail.com</a><br>
+      <strong>Web:</strong> <a href="https://www.gz-ai-stacks.de">www.gz-ai-stacks.de</a><br>
+      <strong>Telefon:</strong> 0151 177 37 336
+    </p>
+    <p>Antwort meist innerhalb von 1–2 Werktagen. Bei Bug-Berichten hilft es, kurz dazu zu
+      schreiben:</p>
+    <ul>
+      <li>Welcher Browser + Version?</li>
+      <li>Welches Betriebssystem?</li>
+      <li>Was wolltest du tun &mdash; was ist stattdessen passiert?</li>
+      <li>Wenn möglich: Konsolen-Output (F12 → Console → roter Text).</li>
+    </ul>
+
+    <div class="callout tip">
+      <span class="ic" aria-hidden="true">💚</span>
+      <div>RootGuide ist ein laufendes Projekt &mdash; Vorschläge und Praxis-Erfahrungen helfen
+      dabei, die App besser zu machen. Schreib mir, was du brauchst.</div>
+    </div>
+
+    <p style="margin-top:1.5rem">
+      <strong>Anbieter:</strong><br>
+      Gerd Zimmermann GZ-AI.-Stacks<br>
+      Görlitzer Straße 10, 91315 Höchstadt a.d. Aisch, Deutschland<br>
+      Kleinunternehmer gemäß § 19 UStG
+    </p>
+    <p>
+      <a href="agb.html">AGB</a> · <a href="widerruf.html">Widerruf</a> ·
+      <a href="datenschutz.html">Datenschutz</a> · <a href="impressum.html">Impressum</a>
+    </p>
+  </section>
+
+</main>
+
+<footer class="hb-foot">
+  © Gerd Zimmermann GZ-AI.-Stacks &middot; RootGuide-Handbuch v1.0 &middot;
+  <a href="https://www.gz-ai-stacks.de">www.gz-ai-stacks.de</a>
+</footer>
+
+</body>
+</html>

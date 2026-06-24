@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RootGuide &mdash; Pflanzen-Kompass, Pflanzabstände &amp; Dünger-Rechner</title>
+<meta name="description" content="RootGuide: Indoor-Pflanzen &amp; Hydroponik-Kompass mit pH/EC-Empfehlungen, Pflanzabstands-Visualisierung und Multi-Dünger-Rechner. Offline, einmal kaufen, jederzeit nutzen.">
+<meta name="theme-color" content="#00ff88">
+<meta property="og:title" content="RootGuide &mdash; Pflanzen-Kompass, Pflanzabstände &amp; Dünger-Rechner">
+<meta property="og:description" content="Indoor-Pflanzen &amp; Hydroponik-Kompass. pH/EC, Pflanzabstände, Multi-Dünger-Rechner, Grow-Tagebuch. Offline im Browser.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --neon:#00ff88; --neon2:#00cfff; --neon3:#ff6b35; --neon-bloom:#ffaa44;
+  --bg:#0a0d12; --bg2:#0f1318; --bg3:#161c24;
+  --border:#1e2d20; --border2:#00ff8830;
+  --text:#c8e6c9; --text-dim:#4a6d4e; --text-bright:#e8fff0;
+  --warn:#ff4060;
+  --shadow:0 0 30px #00ff8820;
+  --zoom:1;
+}
+:root[data-theme="light"]{
+  --neon:#00803a; --neon2:#0078b8; --neon3:#c84a14; --neon-bloom:#b86a0a;
+  --bg:#f3f7f3; --bg2:#ffffff; --bg3:#e8f0e8;
+  --border:#b8d0b8; --border2:#00803a40;
+  --text:#1a3a22; --text-dim:#5a7560; --text-bright:#08220e;
+  --warn:#c8203a;
+  --shadow:0 2px 20px rgba(0,128,58,0.15);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth; font-size:calc(17px * var(--zoom))}
+body{font-family:'Rajdhani',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh; overflow-x:hidden; transition:background 0.25s, color 0.25s}
+body::before{
+  content:''; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(0,255,136,0.08), transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(0,207,255,0.06), transparent 50%);
+}
+a{color:var(--neon2); text-decoration:none}
+a:hover, a:focus{color:var(--neon); outline:none}
+a:focus, button:focus{outline:2px solid var(--neon); outline-offset:3px}
+
+.skip{position:absolute; left:-9999px}
+.skip:focus{left:1rem; top:1rem; background:var(--neon); color:#000; padding:0.6rem 1rem; z-index:999; font-weight:700}
+
+.site-header{
+  padding:2.2rem 1.5rem 1.4rem; max-width:1100px; margin:0 auto;
+  display:flex; align-items:center; gap:1.2rem; flex-wrap:wrap;
+}
+.site-header .controls{
+  margin-left:auto; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;
+}
+.ctrl-btn{
+  background:transparent; border:1px solid var(--border2); color:var(--neon);
+  font-family:'Share Tech Mono',monospace; font-size:0.85rem; font-weight:700;
+  padding:0.45rem 0.7rem; cursor:pointer; border-radius:3px;
+  min-width:38px; min-height:38px;
+  display:inline-flex; align-items:center; justify-content:center;
+  transition:all 0.18s ease; letter-spacing:0.05em;
+}
+.ctrl-btn:hover, .ctrl-btn:focus{background:var(--neon); color:var(--bg); outline:none}
+.ctrl-btn[aria-pressed="true"]{background:var(--neon); color:var(--bg)}
+.zoom-group{
+  display:inline-flex; align-items:stretch;
+  border:1px solid var(--border2); border-radius:3px; overflow:hidden;
+}
+.zoom-group .ctrl-btn{border:none; border-radius:0; border-right:1px solid var(--border2)}
+.zoom-group .ctrl-btn:last-child{border-right:none}
+.zoom-level{
+  font-family:'Share Tech Mono',monospace; font-size:0.85rem;
+  padding:0 0.7rem; display:inline-flex; align-items:center; justify-content:center;
+  color:var(--text-bright); background:var(--bg2);
+  min-width:54px; border-right:1px solid var(--border2);
+  letter-spacing:0.05em;
+}
+@media (max-width:600px){
+  .site-header{padding:1.4rem 1rem 1rem; gap:0.8rem}
+  .site-header .controls{margin-left:0; width:100%; justify-content:flex-end}
+}
+.logo-svg{width:56px; height:56px; filter:drop-shadow(0 0 12px var(--neon))}
+.logo-svg circle, .logo-svg path{stroke:var(--neon); fill:none; stroke-width:3}
+.brand-block h1{
+  font-family:'Share Tech Mono',monospace;
+  font-size:1.9rem; color:var(--neon);
+  text-shadow:0 0 20px currentColor; letter-spacing:0.05em;
+}
+.brand-block .subtitle{
+  font-family:'Share Tech Mono',monospace; font-size:0.78rem;
+  letter-spacing:0.22em; color:var(--text-dim); margin-top:0.2rem;
+}
+
+main{display:block}
+
+.hero{
+  max-width:1100px; margin:1rem auto 3rem; padding:0 1.5rem;
+  display:grid; grid-template-columns:1.1fr 1fr; gap:3rem; align-items:center;
+}
+@media (max-width:840px){.hero{grid-template-columns:1fr; gap:1.5rem}}
+.hero-text h2{
+  font-family:'Rajdhani',sans-serif; font-weight:700;
+  font-size:clamp(2rem, 4.5vw, 3.1rem); line-height:1.1;
+  color:var(--text-bright); margin-bottom:1rem; letter-spacing:-0.005em;
+}
+.hero-text h2 em{font-style:normal; color:var(--neon); text-shadow:0 0 20px var(--neon)}
+.hero-text .lead{
+  font-size:1.12rem; color:var(--text); margin-bottom:1.5rem;
+  line-height:1.55;
+}
+.hero-cta{display:flex; flex-wrap:wrap; gap:0.9rem; margin-top:1.6rem}
+
+.btn{
+  display:inline-flex; align-items:center; gap:0.5rem;
+  padding:0.9rem 1.6rem;
+  font-family:'Share Tech Mono',monospace; font-size:0.92rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase; text-decoration:none;
+  border:2px solid var(--neon); color:var(--neon); background:transparent;
+  cursor:pointer; transition:all 0.18s ease;
+  border-radius:2px;
+}
+.btn:hover, .btn:focus{background:var(--neon); color:#000; outline:none}
+.btn-primary{
+  background:linear-gradient(180deg, var(--neon), #00cc6a);
+  color:#001a0c; border-color:var(--neon);
+  box-shadow:0 4px 24px rgba(0,255,136,0.3), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.btn-primary:hover, .btn-primary:focus{
+  transform:translateY(-1px); color:#000;
+  box-shadow:0 6px 30px rgba(0,255,136,0.45), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+.btn-secondary{border-color:var(--neon2); color:var(--neon2)}
+.btn-secondary:hover, .btn-secondary:focus{background:var(--neon2); color:#000}
+.btn-disabled,
+.btn[aria-disabled="true"]{
+  opacity:0.55; cursor:not-allowed; filter:grayscale(0.4);
+  position:relative;
+}
+.btn-disabled::after,
+.btn[aria-disabled="true"]::after{
+  content:'DEMNÄCHST';
+  position:absolute; top:-10px; right:-8px;
+  background:var(--neon-bloom); color:#000;
+  font-size:0.55rem; padding:2px 7px;
+  letter-spacing:0.15em; border-radius:2px;
+  font-weight:700; transform:rotate(3deg);
+}
+.btn-disabled:hover, .btn[aria-disabled="true"]:hover{
+  background:transparent; color:var(--neon-bloom); transform:none;
+  box-shadow:none;
+}
+
+.hero-visual{
+  position:relative; border:1px solid var(--border2);
+  background:var(--bg2); border-radius:6px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+.hero-visual img{
+  display:block; width:100%; height:auto;
+  border-radius:5px;
+}
+
+.briefing-bar{max-width:1100px; margin:0 auto 3rem; padding:0 1.5rem}
+.briefing-inner{
+  background:var(--bg2); color:var(--text);
+  border:1px solid var(--border2); border-radius:3px;
+  padding:1.1rem 1.4rem; display:flex; flex-wrap:wrap;
+  gap:1.5rem; align-items:center;
+  font-family:'Share Tech Mono',monospace; font-size:0.82rem;
+  box-shadow:var(--shadow);
+}
+.led{display:inline-flex; align-items:center; gap:0.5rem; color:var(--text-dim)}
+.led-dot{
+  width:8px; height:8px; border-radius:50%; background:var(--neon);
+  box-shadow:0 0 8px var(--neon); animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+.led strong{color:var(--neon); letter-spacing:0.1em}
+
+section{max-width:1100px; margin:0 auto 4rem; padding:0 1.5rem}
+.section-title{
+  font-family:'Share Tech Mono',monospace;
+  font-size:1.8rem; color:var(--neon);
+  text-align:center; margin-bottom:0.4rem;
+  text-shadow:0 0 18px var(--neon);
+  letter-spacing:0.06em;
+}
+.section-title::after{
+  content:''; display:block; width:60px; height:2px;
+  background:var(--neon); margin:0.7rem auto 0;
+  box-shadow:0 0 10px var(--neon);
+}
+.section-sub{
+  text-align:center; color:var(--text-dim);
+  max-width:680px; margin:0 auto 2.5rem;
+  font-style:italic;
+}
+
+.features-grid{
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+  gap:1.4rem;
+}
+.feature-tile{
+  background:var(--bg3); border:1px solid var(--border2);
+  border-left:4px solid var(--neon);
+  padding:1.3rem 1.4rem; border-radius:2px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4);
+  transition:transform 0.18s, box-shadow 0.18s;
+}
+.feature-tile:hover, .feature-tile:focus-within{
+  transform:translateY(-3px);
+  box-shadow:0 8px 28px rgba(0,255,136,0.18);
+}
+.feature-tile.accent2{border-left-color:var(--neon2)}
+.feature-tile.accent3{border-left-color:var(--neon3)}
+.feature-tile.bloom{border-left-color:var(--neon-bloom)}
+.feature-icon{font-size:1.9rem; margin-bottom:0.5rem; display:block}
+.feature-tile h4{
+  font-family:'Share Tech Mono',monospace; font-size:1.05rem;
+  color:var(--text-bright); margin-bottom:0.4rem;
+  letter-spacing:0.04em;
+}
+.feature-tile p{font-size:0.94rem; color:var(--text); line-height:1.5}
+
+.compare{
+  background:var(--bg2); border:1px solid var(--border2);
+  border-radius:6px; padding:2rem 1.8rem;
+  box-shadow:var(--shadow);
+}
+.compare-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:1.8rem;
+  margin-top:1.5rem;
+}
+@media (max-width:700px){.compare-grid{grid-template-columns:1fr}}
+.compare-col h4{
+  font-family:'Share Tech Mono',monospace; font-size:0.85rem;
+  letter-spacing:0.15em; text-transform:uppercase; margin-bottom:0.8rem;
+}
+.compare-col.bad h4{color:var(--warn)}
+.compare-col.good h4{color:var(--neon)}
+.compare-col ul{list-style:none; font-size:0.96rem}
+.compare-col li{
+  padding:0.5rem 0; border-bottom:1px dotted var(--border);
+  display:flex; gap:0.6rem; align-items:flex-start;
+}
+.compare-col.bad li::before{content:'✕'; color:var(--warn); font-weight:700; flex-shrink:0}
+.compare-col.good li::before{content:'✓'; color:var(--neon); font-weight:700; flex-shrink:0}
+
+.price-section{
+  background:linear-gradient(160deg, var(--bg2), var(--bg3));
+  border:1px solid var(--border2);
+  border-radius:8px; padding:2.4rem 2rem;
+  text-align:center; position:relative; overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.price-section::before{
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at center top, rgba(0,255,136,0.14), transparent 60%);
+  pointer-events:none;
+}
+.price-section > *{position:relative}
+
+.price-grid{
+  display:grid; grid-template-columns:1fr 1fr; gap:1.6rem;
+  margin:1.5rem auto 0; max-width:780px;
+}
+@media (max-width:720px){.price-grid{grid-template-columns:1fr}}
+
+.price-card{
+  background:var(--bg); border:1px solid var(--border2);
+  padding:1.6rem 1.4rem; border-radius:4px;
+  text-align:left; position:relative;
+}
+.price-card.early{border-color:var(--neon-bloom); box-shadow:0 0 24px rgba(255,170,68,0.15)}
+.price-card.early::before{
+  content:'EARLYBIRD · LIMITIERT'; position:absolute; top:-10px; left:1rem;
+  background:var(--neon-bloom); color:#1a0d00;
+  padding:3px 10px; font-family:'Share Tech Mono',monospace;
+  font-size:0.65rem; letter-spacing:0.18em; border-radius:2px;
+  font-weight:700;
+}
+.price-card .label{
+  font-family:'Share Tech Mono',monospace; font-size:0.75rem;
+  letter-spacing:0.2em; color:var(--text-dim);
+  text-transform:uppercase; margin-bottom:0.4rem;
+}
+.price-card .tag{
+  font-family:'Share Tech Mono',monospace; font-size:2.4rem;
+  font-weight:700; color:var(--text-bright); line-height:1;
+}
+.price-card.early .tag{color:var(--neon-bloom); text-shadow:0 0 20px var(--neon-bloom)}
+.price-card.full .tag{color:var(--neon); text-shadow:0 0 20px var(--neon)}
+.price-card .tag .cents{font-size:1.4rem; vertical-align:super}
+.price-card .note{
+  font-size:0.85rem; color:var(--text-dim);
+  margin:0.4rem 0 1rem;
+}
+.price-card .feat{list-style:none; font-size:0.92rem; margin:1rem 0}
+.price-card .feat li{
+  padding:0.3rem 0; padding-left:1.4rem; position:relative;
+  color:var(--text);
+}
+.price-card .feat li::before{
+  content:'✓'; position:absolute; left:0; top:0.3rem;
+  color:var(--neon);
+}
+.price-card .btn{width:100%; justify-content:center; margin-top:0.6rem}
+
+.legal-fine{
+  margin-top:1.6rem; font-size:0.78rem;
+  color:var(--text-dim); line-height:1.5;
+}
+.legal-fine a{color:var(--neon-bloom)}
+
+.safety-note{
+  background:var(--bg2); border:1px solid var(--border2);
+  border-left:4px solid var(--warn);
+  padding:1.1rem 1.3rem; margin:2rem 0;
+  font-size:0.94rem; color:var(--text); border-radius:0 3px 3px 0;
+}
+.safety-note strong{color:var(--warn)}
+
+details{
+  background:var(--bg2); border:1px solid var(--border2);
+  border-radius:3px; padding:0.9rem 1.2rem;
+  margin-bottom:0.7rem;
+}
+details summary{
+  cursor:pointer; font-family:'Share Tech Mono',monospace;
+  font-weight:700; color:var(--neon); font-size:0.98rem;
+  outline:none; letter-spacing:0.03em;
+}
+details summary::-webkit-details-marker{display:none}
+details summary::before{
+  content:'+ '; color:var(--neon-bloom); font-family:'Share Tech Mono',monospace;
+}
+details[open] summary::before{content:'− '}
+details p{margin-top:0.7rem; font-size:0.96rem; color:var(--text); line-height:1.55}
+
+.site-footer{
+  background:var(--bg2); color:var(--text-dim);
+  border-top:1px solid var(--border2);
+  padding:2rem 1.5rem; text-align:center;
+  font-size:0.88rem; margin-top:4rem;
+}
+.site-footer .links{
+  display:flex; flex-wrap:wrap; justify-content:center;
+  gap:0.8rem 1.5rem; margin-bottom:1rem;
+}
+.site-footer a{color:var(--neon)}
+.site-footer .copy{opacity:0.7}
+
+@media (prefers-reduced-motion:reduce){
+  *, *::before, *::after{animation:none !important; transition:none !important}
+}
+@media (prefers-contrast:more){
+  body{background:#000; color:#fff}
+  .feature-tile, .compare, .price-card{border-width:2px}
+}
+@media (max-width:560px){
+  section{padding:0 1rem}
+  .hero{padding:0 1rem}
+  .price-section{padding:1.6rem 1rem}
+  .compare{padding:1.4rem 1rem}
+  .feature-tile{padding:1rem}
+}
+@media (min-width:1400px){
+  .site-header, section, .hero, .briefing-bar{max-width:1280px}
+}
+</style>
+</head>
+<body>
+
+<a href="#inhalt" class="skip">Zum Inhalt springen</a>
+
+<header class="site-header" role="banner">
+  <svg class="logo-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="45"/>
+    <path d="M50 25 L50 45 L70 30 L50 45 L50 75 L30 60 L50 75 L50 45"/>
+    <circle cx="50" cy="45" r="3" fill="#00ff88" stroke="none"/>
+    <path d="M50 45 L35 55 L20 45 L35 55 L50 45" stroke-width="2"/>
+  </svg>
+  <div class="brand-block">
+    <h1>ROOTGUIDE</h1>
+    <div class="subtitle">Pflanzen-Kompass &middot; Pflanzabstände &middot; Dünger</div>
+  </div>
+  <div class="controls" role="toolbar" aria-label="Seitensteuerung">
+    <div class="zoom-group" role="group" aria-label="Schriftgröße">
+      <button type="button" class="ctrl-btn" id="zoomOutBtn" aria-label="Schrift verkleinern" title="Verkleinern (Strg + Minus)">−</button>
+      <span class="zoom-level" id="zoomLabel" aria-live="polite" aria-atomic="true">100%</span>
+      <button type="button" class="ctrl-btn" id="zoomInBtn" aria-label="Schrift vergrößern" title="Vergrößern (Strg + Plus)">+</button>
+      <button type="button" class="ctrl-btn" id="zoomResetBtn" aria-label="Schriftgröße zurücksetzen" title="Zurücksetzen (Strg + 0)">RESET</button>
+    </div>
+    <button type="button" class="ctrl-btn" id="themeBtn" aria-label="Hell-/Dunkelmodus umschalten" aria-pressed="false" title="Theme wechseln">🌙</button>
+  </div>
+</header>
+
+<main id="inhalt">
+
+  <section class="hero">
+    <div class="hero-text">
+      <h2>Indoor &amp; Hydroponik &mdash; <em>endlich ein Plan, der mitwächst.</em></h2>
+      <p class="lead">RootGuide ist dein digitaler Pflanzen-Kompass für Indoor-Pflanzen,
+        Tomate, Chili, Kräuter und Hydroponik. pH/EC-Empfehlungen, Pflanzabstands-Rechner,
+        Multi-Dünger-Dosierer und Grow-Tagebuch &mdash; alles offline im Browser. Einmal kaufen,
+        jederzeit nutzen. Kein Konto, kein Tracking, kein Abo.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#preis">🌱 Vollversion ansehen</a>
+        <a class="btn btn-secondary" href="demo/">🪴 Demo starten</a>
+      </div>
+    </div>
+    <aside class="hero-visual" aria-label="RootGuide-Vorschau">
+      <img src="img/rootguide-hero.jpg" alt="RootGuide-App auf einem Smartphone, umgeben von Pflanzen, pH-/EC-Messgeräten, Dünger-Flaschen und Grow-Tagebuch" loading="lazy">
+    </aside>
+  </section>
+
+  <div class="briefing-bar">
+    <div class="briefing-inner">
+      <span class="led"><span class="led-dot" aria-hidden="true"></span>STATUS: <strong>EINSATZBEREIT</strong></span>
+      <span class="led">// 100% OFFLINE</span>
+      <span class="led">// KEIN TRACKING</span>
+      <span class="led">// KEIN ABO</span>
+      <span class="led">// EINMALKAUF</span>
+    </div>
+  </div>
+
+  <section id="features">
+    <h3 class="section-title">Was RootGuide kann</h3>
+    <p class="section-sub">Drei Werkzeuge, die du brauchst &mdash; dazu Tagebuch, Krankheitsbibliothek und Timelapse-Kamera.</p>
+    <div class="features-grid">
+
+      <article class="feature-tile">
+        <span class="feature-icon" aria-hidden="true">📏</span>
+        <h4>Pflanzabstands-Rechner</h4>
+        <p>Reihenabstand, Pflanzenabstand und Topf-Durchmesser visualisiert. Du siehst sofort, wie viele
+          Pflanzen in dein Beet, Hochbeet oder Zelt passen &mdash; ohne Tabellen-Gefriemel.</p>
+      </article>
+
+      <article class="feature-tile accent2">
+        <span class="feature-icon" aria-hidden="true">🧪</span>
+        <h4>Multi-Dünger-Rechner</h4>
+        <p>Ziel-EC, Wassermenge, Pulver- und Lösungs-Verhältnisse. RootGuide rechnet die Dosierung pro
+          Liter aus &mdash; egal welcher Dünger, egal welche Phase.</p>
+      </article>
+
+      <article class="feature-tile accent3">
+        <span class="feature-icon" aria-hidden="true">🌿</span>
+        <h4>Pflanzen-Kompass</h4>
+        <p>Datenbank mit Sorten, pH-/EC-Optimum für Jungpflanze, Veg- und Blütephase, PPFD-Lichtwerte
+          und Substrat-Empfehlung (Erde, Steinwolle, Cocos). Eigene Pflanzen lassen sich ergänzen.</p>
+      </article>
+
+      <article class="feature-tile bloom">
+        <span class="feature-icon" aria-hidden="true">📔</span>
+        <h4>Grow-Tagebuch mit Foto</h4>
+        <p>Datum, Phase, pH-/EC-Messung, Notizen &mdash; und Foto direkt aus Datei, Live-Kamera oder
+          IP-Cam. Alles lokal, ohne Cloud.</p>
+      </article>
+
+      <article class="feature-tile accent3">
+        <span class="feature-icon" aria-hidden="true">🦠</span>
+        <h4>Krankheits-Bibliothek</h4>
+        <p>Mehltau, Spinnmilben, Trauermücken, Mangelerscheinungen &mdash; mit Symptomen, Ursachen,
+          Behandlung und Vorbeugung. Schnell durchsuchbar.</p>
+      </article>
+
+      <article class="feature-tile accent2">
+        <span class="feature-icon" aria-hidden="true">⏱</span>
+        <h4>Timelapse-Aufnahme</h4>
+        <p>Intervall-Aufnahme über Live-Kamera oder IP-Cam. Bilder bleiben lokal im Browser
+          (IndexedDB), abspielbar als Sequenz &mdash; perfekt für Wachstums-Dokumentation.</p>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="vergleich">
+    <h3 class="section-title">Andere Grow-Apps vs. RootGuide</h3>
+    <div class="compare">
+      <p style="text-align:center; color:var(--text-dim); font-style:italic;">Die meisten Grow-Apps wollen ein Konto, ein Abo oder beides. RootGuide nicht.</p>
+      <div class="compare-grid">
+        <div class="compare-col bad">
+          <h4>Typische Apps</h4>
+          <ul>
+            <li>Abo: 4&ndash;15 € pro Monat</li>
+            <li>Konto-Zwang mit E-Mail</li>
+            <li>Cloud-Sync &mdash; Daten landen beim Anbieter</li>
+            <li>Werbung oder versteckte Käufe</li>
+            <li>Wenn der Anbieter abschaltet, sind die Daten weg</li>
+          </ul>
+        </div>
+        <div class="compare-col good">
+          <h4>RootGuide</h4>
+          <ul>
+            <li>Einmaliger Endpreis &mdash; fertig</li>
+            <li>Kein Konto, kein Login, keine E-Mail in der App</li>
+            <li>100% offline &mdash; alles in deinem Browser</li>
+            <li>Keine Werbung, kein Tracking</li>
+            <li>Updates &amp; Sicherheits-Patches 3 Jahre inklusive</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="safety-note" role="note">
+      <strong>⚠ Wichtiger Hinweis:</strong> RootGuide ist ein <strong>Werkzeug zur Planung
+      und Dokumentation</strong>. pH-, EC- und Dünger-Werte sind Erfahrungsrichtwerte,
+      keine garantierten Setzwerte. Jedes Substrat, jede Sorte und jedes Klima reagiert
+      anders &mdash; eigene Messung und Beobachtung bleibt unverzichtbar. RootGuide ersetzt
+      weder gärtnerische Erfahrung noch fachliche Beratung.
+    </div>
+  </section>
+
+  <section id="preis">
+    <div class="price-section">
+      <div style="font-family:'Share Tech Mono',monospace; font-size:0.85rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--neon-bloom); margin-bottom:0.4rem;">FREISCHALTUNG</div>
+      <h3 class="section-title" style="margin-top:0; color:var(--text-bright); text-shadow:none;">Zwei Wege zur Vollversion</h3>
+      <p style="color:var(--text-dim); max-width:560px; margin:0.6rem auto 0;">Earlybird-Kontingent für die ersten Nutzer. Danach reguläre Vollversion zum Endpreis.</p>
+
+      <div class="price-grid">
+
+        <div class="price-card early">
+          <div class="label">Earlybird &middot; limitiert auf 30 Stück</div>
+          <div class="tag">19,<span class="cents">90 €</span></div>
+          <div class="note">Einmaliger Endpreis &middot; § 19 UStG, keine Umsatzsteuer</div>
+          <ul class="feat">
+            <li>Vollversion mit allen Features</li>
+            <li>Pflanzabstands-Rechner</li>
+            <li>Multi-Dünger-Rechner</li>
+            <li>Grow-Tagebuch + Timelapse</li>
+            <li>Updates &amp; Patches 3 Jahre inklusive</li>
+            <li>Als PWA installierbar (offline)</li>
+          </ul>
+          <a class="btn btn-primary btn-disabled" href="#" aria-disabled="true" role="link" tabindex="-1">🚀 Earlybird sichern</a>
+        </div>
+
+        <div class="price-card full">
+          <div class="label">Vollversion &middot; regulär</div>
+          <div class="tag">29,<span class="cents">90 €</span></div>
+          <div class="note">Einmaliger Endpreis &middot; § 19 UStG, keine Umsatzsteuer</div>
+          <ul class="feat">
+            <li>Identischer Funktions-Umfang</li>
+            <li>Pflanzabstands-Rechner</li>
+            <li>Multi-Dünger-Rechner</li>
+            <li>Grow-Tagebuch + Timelapse</li>
+            <li>Updates &amp; Patches 3 Jahre inklusive</li>
+            <li>Als PWA installierbar (offline)</li>
+          </ul>
+          <a class="btn btn-secondary btn-disabled" href="#" aria-disabled="true" role="link" tabindex="-1">🌱 Vollversion sichern</a>
+        </div>
+
+      </div>
+
+      <p class="legal-fine">
+        Endpreis &mdash; gemäß § 19 UStG wird keine Umsatzsteuer ausgewiesen. Verkauf und Abwicklung über Digistore24.
+      </p>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h3 class="section-title">Häufige Fragen</h3>
+    <div style="max-width:800px; margin:0 auto;">
+      <details>
+        <summary>Brauche ich Internet, um RootGuide zu nutzen?</summary>
+        <p>Nein. Nach dem ersten Laden im Browser läuft alles offline. Du kannst die App
+          sogar als PWA installieren und ohne Verbindung weiterarbeiten.</p>
+      </details>
+      <details>
+        <summary>Auf welchen Geräten läuft RootGuide?</summary>
+        <p>Auf allem mit modernem Browser: Windows, Mac, Linux, Android, iPhone, iPad.
+          Empfohlen: Chrome, Edge, Firefox, Safari in aktueller Version.</p>
+      </details>
+      <details>
+        <summary>Gibt es ein Abo oder versteckte Kosten?</summary>
+        <p>Nein. Es ist ein Einmalkauf. Updates und Sicherheits-Patches sind 3 Jahre
+          inklusive. Danach bleibt deine gekaufte Version unverändert nutzbar.</p>
+      </details>
+      <details>
+        <summary>Muss ich ein Konto anlegen oder meine E-Mail in der App angeben?</summary>
+        <p>Nein. Nach dem Kauf bekommst du einen Freischaltcode. In der App eingeben &mdash;
+          fertig. Kein Konto, keine E-Mail-Pflicht, kein Cloud-Sync.</p>
+      </details>
+      <details>
+        <summary>Für welche Pflanzen ist RootGuide gedacht?</summary>
+        <p>Für Indoor-Pflanzen aller Art &mdash; Tomate, Chili, Kräuter, Salat, Erdbeeren und
+          alles, was du unter Pflanzenlampen oder in Hydroponik-Setups ziehst. Outdoor-Garten
+          funktioniert ebenfalls, die App ist aber auf Indoor-/Hydroponik-Workflow optimiert
+          (pH/EC, PPFD, Substrate Erde/Steinwolle/Cocos).</p>
+      </details>
+      <details>
+        <summary>Was passiert mit meinen Daten?</summary>
+        <p>Sie bleiben lokal in deinem Browser (localStorage und IndexedDB für Fotos).
+          Es gibt keinen RootGuide-Server, keine Cloud, kein Backup beim Anbieter. Du kannst
+          deine Datenbank jederzeit als JSON exportieren und importieren.</p>
+      </details>
+      <details>
+        <summary>Was passiert, wenn mir die App nicht gefällt?</summary>
+        <p>Du hast 14 Tage Widerrufsrecht. Bei digitalen Inhalten erlischt das Widerrufsrecht,
+          wenn du der sofortigen Ausführung beim Kauf zustimmst &mdash; das wird im Bestellprozess
+          transparent angezeigt.</p>
+      </details>
+      <details>
+        <summary>Kann ich eigene Pflanzen mit eigenen Werten anlegen?</summary>
+        <p>Ja. RootGuide kommt mit einer Sammlung an Standard-Pflanzen, du kannst aber
+          beliebige eigene Pflanzen mit allen pH-/EC-/PPFD-Werten und Substrat-Optionen
+          ergänzen.</p>
+      </details>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="links">
+    <a href="HANDBUCH.html">Handbuch</a>
+    <a href="impressum.html">Impressum</a>
+    <a href="datenschutz.html">Datenschutz</a>
+    <a href="agb.html">AGB</a>
+    <a href="widerruf.html">Widerruf</a>
+  </div>
+  <p class="copy">© Gerd Zimmermann GZ-AI.-Stacks · <a href="https://www.gz-ai-stacks.de">www.gz-ai-stacks.de</a></p>
+</footer>
+
+<script>
+(function(){
+  var html = document.documentElement;
+  var STORAGE_THEME = 'rootguide_theme';
+  var STORAGE_ZOOM  = 'rootguide_zoom';
+  var ZOOM_MIN = 0.6, ZOOM_MAX = 2.0, ZOOM_STEP = 0.1;
+
+  // ---------- THEME ----------
+  function applyTheme(theme){
+    html.setAttribute('data-theme', theme);
+    var btn = document.getElementById('themeBtn');
+    if(btn){
+      btn.textContent = (theme === 'light') ? '☀️' : '🌙';
+      btn.setAttribute('aria-pressed', theme === 'light' ? 'true' : 'false');
+      btn.setAttribute('aria-label', theme === 'light'
+        ? 'Auf Dunkelmodus umschalten'
+        : 'Auf Hellmodus umschalten');
+    }
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.setAttribute('content', theme === 'light' ? '#f3f7f3' : '#0a0d12');
+  }
+  function getInitialTheme(){
+    try{
+      var stored = localStorage.getItem(STORAGE_THEME);
+      if(stored === 'light' || stored === 'dark') return stored;
+    }catch(e){}
+    return 'light';
+  }
+  applyTheme(getInitialTheme());
+
+  // ---------- ZOOM ----------
+  function applyZoom(z){
+    z = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, +z.toFixed(2)));
+    html.style.setProperty('--zoom', z);
+    var label = document.getElementById('zoomLabel');
+    if(label) label.textContent = Math.round(z * 100) + '%';
+    try{ localStorage.setItem(STORAGE_ZOOM, String(z)); }catch(e){}
+    return z;
+  }
+  function getInitialZoom(){
+    try{
+      var v = parseFloat(localStorage.getItem(STORAGE_ZOOM));
+      if(!isNaN(v) && v >= ZOOM_MIN && v <= ZOOM_MAX) return v;
+    }catch(e){}
+    return 1;
+  }
+  var currentZoom = getInitialZoom();
+  applyZoom(currentZoom);
+
+  // ---------- INIT BUTTONS ----------
+  document.addEventListener('DOMContentLoaded', function(){
+    applyTheme(getInitialTheme()); // re-apply, falls Button erst jetzt da
+    applyZoom(currentZoom);
+
+    var themeBtn = document.getElementById('themeBtn');
+    if(themeBtn) themeBtn.addEventListener('click', function(){
+      var next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      applyTheme(next);
+      try{ localStorage.setItem(STORAGE_THEME, next); }catch(e){}
+    });
+
+    var inBtn  = document.getElementById('zoomInBtn');
+    var outBtn = document.getElementById('zoomOutBtn');
+    var rstBtn = document.getElementById('zoomResetBtn');
+    if(inBtn)  inBtn.addEventListener('click',  function(){ currentZoom = applyZoom(currentZoom + ZOOM_STEP); });
+    if(outBtn) outBtn.addEventListener('click', function(){ currentZoom = applyZoom(currentZoom - ZOOM_STEP); });
+    if(rstBtn) rstBtn.addEventListener('click', function(){ currentZoom = applyZoom(1); });
+  });
+
+  // ---------- TASTATUR (Strg + / Strg - / Strg 0) ----------
+  document.addEventListener('keydown', function(e){
+    if(!(e.ctrlKey || e.metaKey)) return;
+    // Plus: '+', '=', NumpadAdd. Minus: '-', NumpadSubtract. Reset: '0'.
+    if(e.key === '+' || e.key === '=' || e.code === 'NumpadAdd'){
+      currentZoom = applyZoom(currentZoom + ZOOM_STEP); e.preventDefault();
+    } else if(e.key === '-' || e.code === 'NumpadSubtract'){
+      currentZoom = applyZoom(currentZoom - ZOOM_STEP); e.preventDefault();
+    } else if(e.key === '0' || e.code === 'Numpad0'){
+      currentZoom = applyZoom(1); e.preventDefault();
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
