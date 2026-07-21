@@ -909,7 +909,7 @@ document.addEventListener('DOMContentLoaded', function() {
 let zoom = 1;
 function changeZoom(delta) { zoom = Math.min(2, Math.max(0.4, +(zoom+delta).toFixed(1))); document.documentElement.style.setProperty('--zoom', zoom); document.getElementById('zoomLabel').innerText = Math.round(zoom*100)+'%'; }
 function resetZoom() { zoom = 1; document.documentElement.style.setProperty('--zoom', zoom); document.getElementById('zoomLabel').innerText = '100%'; }
-function applyTheme(theme) { const html = document.documentElement; const btn = document.getElementById('themeBtn'); html.dataset.theme = theme; btn.innerHTML = theme === 'light' ? '🌙 DUNKEL' : '☀️ HELL'; }
+function applyTheme(theme) { const html = document.documentElement; const btn = document.getElementById('themeBtn'); html.dataset.theme = theme; btn.innerHTML = theme === 'light' ? '🌙 DUNKEL' : '☀️ HELL'; const meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute('content', theme === 'light' ? '#f3f7f3' : '#0a0d12'); }
 function toggleTheme() { const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; applyTheme(next); try { localStorage.setItem('rootguide_theme', next); } catch(e){} }
 
 // ========== ICONS ==========
